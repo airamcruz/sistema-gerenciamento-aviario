@@ -1,7 +1,9 @@
 package br.com.airamcruz.projeto.integrador.model;
 
 public class TipoSensorModel {
+	
 	private int id;
+	
 	private String descricao;
 	
 	public TipoSensorModel() {

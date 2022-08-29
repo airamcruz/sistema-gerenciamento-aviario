@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.airamcruz.projeto.integrador.util.PropertiesUtil;
+
 /**
  *
  * @author Leonardo Airam Muniz Cruz
@@ -23,77 +25,66 @@ import java.util.stream.Collectors;
 
 public class DatabaseBroker {
 	
-	private String query;
+	private Connection conn = null;
 	
-	public void setQuery(String query) {
-		this.query = query;
-	}
+	private PreparedStatement ps;
 	
-	public boolean execute(Object obj, String ...parameters) {
-		
-		try(Connection conn = DatabaseFactory.getConnection())
-		{
-			try(PreparedStatement ps = conn.prepareStatement(this.query))
-			{
-				for(int i = 0;  i < parameters.length; i++) {
-					ps.setObject(i, getFieldValue(obj, parameters[i]));
-				}
-								
-				return ps.execute();
-			}
-			
+	public void setQuery(String query, boolean isReturnGeneratedKeys) {
+		if(this.conn == null)
+			this.conn = DatabaseFactory.getConnection();
+				
+		try {
+			if(isReturnGeneratedKeys)
+				this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query), Statement.RETURN_GENERATED_KEYS);
+			else 
+				this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query));
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return false;
+				
 	}
 	
-	public int executeReturnGeneratedKey(Object obj, String ...parameters) {
+	public void setQueryParameters(Object obj, String ...parameters) {
+		try {
+			for(int i = 0;  i < parameters.length; i++) {
+				this.ps.setObject(i + 1, getFieldValue(obj, parameters[i]));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public int executeReturnGeneratedKey() {
 
 		int id = 0;
-		
-		try(Connection conn = DatabaseFactory.getConnection())
-		{
-			try(PreparedStatement ps = conn.prepareStatement(this.query, Statement.RETURN_GENERATED_KEYS))
-			{
-				for(int i = 0;  i < parameters.length; i++) {
-					ps.setObject(i, getFieldValue(obj, parameters[i]));
-				}
 								
-				ps.execute();
-				
-		        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-		            if (generatedKeys.next()) {
-		            	id = generatedKeys.getInt(1);
-		            }
-		            else {
-		                throw new SQLException("Creating failed, no ID obtained.");
-		            }
-		        }
-			}
-			
+		try {
+			this.ps.execute();
+			try (ResultSet generatedKeys = this.ps.getGeneratedKeys()) {
+	            if (generatedKeys.next()) {
+	            	id = generatedKeys.getInt(1);
+	            }
+	            else {
+	                throw new SQLException("Creating failed, no ID obtained.");
+	            }
+	        }
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return id;
 	}
 
-	public int executeUpdate(Object obj, String ...parameters) {
+	public int executeUpdate() {
 
 		int rows = 0;
 		
-		try(Connection conn = DatabaseFactory.getConnection())
+		try
 		{
-			try(PreparedStatement ps = conn.prepareStatement(this.query))
-			{
-				for(int i = 0;  i < parameters.length; i++) {
-					ps.setObject(i, getFieldValue(obj, parameters[i]));
-				}
-								
-				rows =  ps.executeUpdate();
-			}
+			rows =  this.ps.executeUpdate();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -102,64 +93,46 @@ public class DatabaseBroker {
 		return rows;
 	}
 	
-	public <T> T getObject(Class<T> clazz, Object obj, String ...parameters ) {
+	public <T> T getObject(Class<T> clazz, String ...fields ) {
+		
+		try(ResultSet rs = this.ps.executeQuery();) {
 
-		try(Connection conn = DatabaseFactory.getConnection())
-		{
-			try(PreparedStatement ps = conn.prepareStatement(query)) {
-
-				for(int i = 0;  i < parameters.length; i++) {
-					ps.setObject(i, getFieldValue(obj, parameters[i]));
+			T result = clazz.getDeclaredConstructor().newInstance();
+			
+	        while (rs.next()) {
+				for(int i = 0;  i < fields.length; i++) {
+					setFieldValue(result, fields[i], rs.getString(i + 1));
 				}
-				
-			    try (ResultSet rs = ps.executeQuery();) {
-					
-					T result = clazz.getDeclaredConstructor().newInstance();
-					
-			        while (rs.next()) {
-						for(int i = 0;  i < parameters.length; i++) {
-							setFieldValue(result, parameters[i], rs.getString(i));
-						}
-			        }
-			        
-			        return result;
-			    }
-			}
-		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+	        }
+	        
+	        return result;
+	        
+		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+        	    
 	    return null;
 	}
 	
-	public <T> List<T> getListObject(Class<T> clazz, Object obj, String ...parameters ) {
+	public <T> List<T> getListObject(Class<T> clazz, String ...parameters ) {
 
-		try(Connection conn = DatabaseFactory.getConnection())
-		{
-			try(PreparedStatement ps = conn.prepareStatement(query)) {
+		try(ResultSet rs = this.ps.executeQuery();) {
 
+			List<T> result = new ArrayList<T>();
+	    	
+	        while (rs.next()) {
+	        	T obj = clazz.getDeclaredConstructor().newInstance();
 				for(int i = 0;  i < parameters.length; i++) {
-					ps.setObject(i, getFieldValue(obj, parameters[i]));
+					setFieldValue(obj, parameters[i], rs.getString(i + 1));
 				}
-				
-			    try (ResultSet rs = ps.executeQuery();) {
-					
-			    	List<T> result = new ArrayList<T>();
-			    	
-			        while (rs.next()) {
-			        	T objTemp = clazz.getDeclaredConstructor().newInstance();
-						for(int i = 0;  i < parameters.length; i++) {
-							setFieldValue(result, parameters[i], rs.getString(i));
-						}
-						result.add(objTemp);
-			        }
-			        
-			        return result;
-			    }
-			}
-		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				result.add(obj);
+	        }
+	        
+	        return result;
+	        
+		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    
@@ -188,11 +161,7 @@ public class DatabaseBroker {
 			
 			prop.setAccessible(accessibleTemp);
 			
-		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	    
@@ -240,25 +209,7 @@ public class DatabaseBroker {
 			
 			prop.setAccessible(accessibleTemp);
 			
-		} catch (NoSuchFieldException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
