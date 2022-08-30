@@ -11,31 +11,51 @@ public class HistoricoMonitoramentoModel {
 	public HistoricoMonitoramentoModel() {
 		super();
 	}
+	
 	public HistoricoMonitoramentoModel(int id) {
 		super();
 		this.id = id;
 	}
+	
 	public HistoricoMonitoramentoModel(int id, String valor, SensorModel sensorModel) {
 		super();
 		this.id = id;
 		this.valor = valor;
 		this.sensorModel = sensorModel;
 	}
-	public String getValor() {
-		return valor;
-	}
-	public void setValor(String valor) {
-		this.valor = valor;
-	}
-	public SensorModel getSensorModel() {
-		return sensorModel;
-	}
-	public void setSensorModel(SensorModel sensorModel) {
-		this.sensorModel = sensorModel;
-	}
+
 	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
+	public Date getHorarioMonitoramento() {
+		return horarioMonitoramento;
+	}
+
+	public void setHorarioMonitoramento(Date horarioMonitoramento) {
+		this.horarioMonitoramento = horarioMonitoramento;
+	}
+
+	public SensorModel getSensorModel() {
+		return sensorModel;
+	}
+
+	public void setSensorModel(SensorModel sensorModel) {
+		this.sensorModel = sensorModel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -43,6 +63,7 @@ public class HistoricoMonitoramentoModel {
 		result = prime * result + id;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

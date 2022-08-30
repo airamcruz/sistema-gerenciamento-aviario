@@ -11,10 +11,12 @@ public class BoletimSanitarioModel {
 	public BoletimSanitarioModel() {
 		super();
 	}
+	
 	public BoletimSanitarioModel(int id) {
 		super();
 		this.id = id;
 	}
+	
 	public BoletimSanitarioModel(int id, Date data, String parecer, AviarioModel aviarioModel) {
 		super();
 		this.id = id;
@@ -22,28 +24,39 @@ public class BoletimSanitarioModel {
 		this.parecer = parecer;
 		this.aviarioModel = aviarioModel;
 	}
-	
-	public Date getData() {
-		return data;
-	}
-	public void setData(Date data) {
-		this.data = data;
-	}
-	public String getParecer() {
-		return parecer;
-	}
-	public void setParecer(String parecer) {
-		this.parecer = parecer;
-	}
-	public AviarioModel getAviarioModel() {
-		return aviarioModel;
-	}
-	public void setAviarioModel(AviarioModel aviarioModel) {
-		this.aviarioModel = aviarioModel;
-	}
+
 	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public String getParecer() {
+		return parecer;
+	}
+
+	public void setParecer(String parecer) {
+		this.parecer = parecer;
+	}
+
+	public AviarioModel getAviarioModel() {
+		return aviarioModel;
+	}
+
+	public void setAviarioModel(AviarioModel aviarioModel) {
+		this.aviarioModel = aviarioModel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -51,6 +64,7 @@ public class BoletimSanitarioModel {
 		result = prime * result + id;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

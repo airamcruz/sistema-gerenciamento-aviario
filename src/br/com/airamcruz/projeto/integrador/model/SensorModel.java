@@ -12,10 +12,12 @@ public class SensorModel {
 	public SensorModel() {
 		super();
 	}
+	
 	public SensorModel(int id) {
 		super();
 		this.id = id;
 	}
+	
 	public SensorModel(int id, String descricao, Date dataInstalacao, AviarioModel aviarioModel,
 			TipoSensorModel tipoSensorModel) {
 		super();
@@ -25,33 +27,47 @@ public class SensorModel {
 		this.aviarioModel = aviarioModel;
 		this.tipoSensorModel = tipoSensorModel;
 	}
-	public String getDescricao() {
-		return descricao;
-	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-	public Date getDataInstalacao() {
-		return dataInstalacao;
-	}
-	public void setDataInstalacao(Date dataInstalacao) {
-		this.dataInstalacao = dataInstalacao;
-	}
-	public AviarioModel getAviarioModel() {
-		return aviarioModel;
-	}
-	public void setAviarioModel(AviarioModel aviarioModel) {
-		this.aviarioModel = aviarioModel;
-	}
-	public TipoSensorModel getTipoSensorModel() {
-		return tipoSensorModel;
-	}
-	public void setTipoSensorModel(TipoSensorModel tipoSensorModel) {
-		this.tipoSensorModel = tipoSensorModel;
-	}
+
 	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Date getDataInstalacao() {
+		return dataInstalacao;
+	}
+
+	public void setDataInstalacao(Date dataInstalacao) {
+		this.dataInstalacao = dataInstalacao;
+	}
+
+	public AviarioModel getAviarioModel() {
+		return aviarioModel;
+	}
+
+	public void setAviarioModel(AviarioModel aviarioModel) {
+		this.aviarioModel = aviarioModel;
+	}
+
+	public TipoSensorModel getTipoSensorModel() {
+		return tipoSensorModel;
+	}
+
+	public void setTipoSensorModel(TipoSensorModel tipoSensorModel) {
+		this.tipoSensorModel = tipoSensorModel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,6 +75,7 @@ public class SensorModel {
 		result = prime * result + id;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

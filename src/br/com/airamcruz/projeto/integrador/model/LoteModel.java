@@ -13,10 +13,12 @@ public class LoteModel {
 	public LoteModel() {
 		super();
 	}
+	
 	public LoteModel(int id) {
 		super();
 		this.id = id;
 	}
+	
 	public LoteModel(int id, String descricao, Date dataCompra, int quantidadeFrangos, Date previsaoAbate, AviarioModel aviarioModel) {
 		super();
 		this.id = id;
@@ -26,39 +28,55 @@ public class LoteModel {
 		this.previsaoAbate = previsaoAbate;
 		this.aviarioModel = aviarioModel;
 	}
-	public String getDescricao() {
-		return descricao;
-	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-	public Date getDataCompra() {
-		return dataCompra;
-	}
-	public void setDataCompra(Date dataCompra) {
-		this.dataCompra = dataCompra;
-	}
-	public int getQuantidadeFrangos() {
-		return quantidadeFrangos;
-	}
-	public void setQuantidadeFrangos(int quantidadeFrangos) {
-		this.quantidadeFrangos = quantidadeFrangos;
-	}
-	public Date getPrevisaoAbate() {
-		return previsaoAbate;
-	}
-	public void setPrevisaoAbate(Date previsaoAbate) {
-		this.previsaoAbate = previsaoAbate;
-	}
-	public AviarioModel getAviarioModel() {
-		return aviarioModel;
-	}
-	public void setAviarioModel(AviarioModel aviarioModel) {
-		this.aviarioModel = aviarioModel;
-	}
+
 	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Date getDataCompra() {
+		return dataCompra;
+	}
+
+	public void setDataCompra(Date dataCompra) {
+		this.dataCompra = dataCompra;
+	}
+
+	public int getQuantidadeFrangos() {
+		return quantidadeFrangos;
+	}
+
+	public void setQuantidadeFrangos(int quantidadeFrangos) {
+		this.quantidadeFrangos = quantidadeFrangos;
+	}
+
+	public Date getPrevisaoAbate() {
+		return previsaoAbate;
+	}
+
+	public void setPrevisaoAbate(Date previsaoAbate) {
+		this.previsaoAbate = previsaoAbate;
+	}
+
+	public AviarioModel getAviarioModel() {
+		return aviarioModel;
+	}
+
+	public void setAviarioModel(AviarioModel aviarioModel) {
+		this.aviarioModel = aviarioModel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -66,6 +84,7 @@ public class LoteModel {
 		result = prime * result + id;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

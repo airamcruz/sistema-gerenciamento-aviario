@@ -12,10 +12,12 @@ public class MortalidadeModel {
 	public MortalidadeModel() {
 		super();
 	}
+	
 	public MortalidadeModel(int id) {
 		super();
 		this.id = id;
 	}
+	
 	public MortalidadeModel(int id, String motivoMortalidade, Date dataMortalidade, int quantidadeFrangos,
 			LoteModel loteModel) {
 		super();
@@ -25,34 +27,47 @@ public class MortalidadeModel {
 		this.quantidadeFrangos = quantidadeFrangos;
 		this.loteModel = loteModel;
 	}
-	public String getMotivoMortalidade() {
-		return motivoMortalidade;
-	}
-	public void setMotivoMortalidade(String motivoMortalidade) {
-		this.motivoMortalidade = motivoMortalidade;
-	}
-	public Date getDataMortalidade() {
-		return dataMortalidade;
-	}
-	public void setDataMortalidade(Date dataMortalidade) {
-		this.dataMortalidade = dataMortalidade;
-	}
-	public int getQuantidadeFrangos() {
-		return quantidadeFrangos;
-	}
-	public void setQuantidadeFrangos(int quantidadeFrangos) {
-		this.quantidadeFrangos = quantidadeFrangos;
-	}
-	public LoteModel getLoteModel() {
-		return loteModel;
-	}
-	public void setLoteModel(LoteModel loteModel) {
-		this.loteModel = loteModel;
-	}
+	
 	public int getId() {
 		return id;
 	}
-	
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getMotivoMortalidade() {
+		return motivoMortalidade;
+	}
+
+	public void setMotivoMortalidade(String motivoMortalidade) {
+		this.motivoMortalidade = motivoMortalidade;
+	}
+
+	public Date getDataMortalidade() {
+		return dataMortalidade;
+	}
+
+	public void setDataMortalidade(Date dataMortalidade) {
+		this.dataMortalidade = dataMortalidade;
+	}
+
+	public int getQuantidadeFrangos() {
+		return quantidadeFrangos;
+	}
+
+	public void setQuantidadeFrangos(int quantidadeFrangos) {
+		this.quantidadeFrangos = quantidadeFrangos;
+	}
+
+	public LoteModel getLoteModel() {
+		return loteModel;
+	}
+
+	public void setLoteModel(LoteModel loteModel) {
+		this.loteModel = loteModel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -60,6 +75,7 @@ public class MortalidadeModel {
 		result = prime * result + id;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
