@@ -1,8 +1,11 @@
 package br.com.airamcruz.projeto.integrador.model;
 
+import java.util.Date;
+
 public class HistoricoMonitoramentoModel {
 	private int id;
 	private String valor;
+	private Date horarioMonitoramento;
 	private SensorModel sensorModel;
 	
 	public HistoricoMonitoramentoModel() {

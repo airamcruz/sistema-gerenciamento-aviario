@@ -7,8 +7,6 @@ public class LoteModel {
 	private String descricao;
 	private Date dataCompra;
 	private int quantidadeFrangos;
-	private boolean finalizado;
-	private double custoCompra;
 	private Date previsaoAbate;
 	private AviarioModel aviarioModel;
 	
@@ -19,15 +17,12 @@ public class LoteModel {
 		super();
 		this.id = id;
 	}
-	public LoteModel(int id, String descricao, Date dataCompra, int quantidadeFrangos, boolean finalizado,
-			double custoCompra, Date previsaoAbate, AviarioModel aviarioModel) {
+	public LoteModel(int id, String descricao, Date dataCompra, int quantidadeFrangos, Date previsaoAbate, AviarioModel aviarioModel) {
 		super();
 		this.id = id;
 		this.descricao = descricao;
 		this.dataCompra = dataCompra;
 		this.quantidadeFrangos = quantidadeFrangos;
-		this.finalizado = finalizado;
-		this.custoCompra = custoCompra;
 		this.previsaoAbate = previsaoAbate;
 		this.aviarioModel = aviarioModel;
 	}
@@ -48,18 +43,6 @@ public class LoteModel {
 	}
 	public void setQuantidadeFrangos(int quantidadeFrangos) {
 		this.quantidadeFrangos = quantidadeFrangos;
-	}
-	public boolean isFinalizado() {
-		return finalizado;
-	}
-	public void setFinalizado(boolean finalizado) {
-		this.finalizado = finalizado;
-	}
-	public double getCustoCompra() {
-		return custoCompra;
-	}
-	public void setCustoCompra(double custoCompra) {
-		this.custoCompra = custoCompra;
 	}
 	public Date getPrevisaoAbate() {
 		return previsaoAbate;

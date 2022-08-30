@@ -1,6 +1,6 @@
 package br.com.airamcruz.projeto.integrador.dao;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import br.com.airamcruz.projeto.integrador.model.TipoSensorModel;
 import br.com.airamcruz.projeto.integrador.util.factory.DatabaseBroker;
@@ -14,7 +14,7 @@ public class TipoSensorDAO {
 		
 		broker.setQueryParameters(model, "descricao");
 		
-		return broker.executeReturnGeneratedKey();
+		return broker.executeUpdate();
 	}
 	
 	public TipoSensorModel Obter(TipoSensorModel model) {
@@ -25,10 +25,10 @@ public class TipoSensorDAO {
 		return broker.getObject(TipoSensorModel.class, "id", "descricao");
 	}
 	
-	public List<TipoSensorModel> ObterTodos(TipoSensorModel model) {
-		broker.setQuery("tipo_sensor.read");
+	public ArrayList<TipoSensorModel> ObterTodos() {
+		broker.setQuery("tipo_sensor.readAll");
 		
-		return broker.getListObject(TipoSensorModel.class, "id", "descricao");
+		return (ArrayList<TipoSensorModel>)broker.getListObject(TipoSensorModel.class, "id", "descricao");
 	}
 	
 	public int Atualizar(TipoSensorModel model) {
