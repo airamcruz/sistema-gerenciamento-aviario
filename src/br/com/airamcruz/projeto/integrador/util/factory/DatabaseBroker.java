@@ -2,7 +2,6 @@ package br.com.airamcruz.projeto.integrador.util.factory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +28,8 @@ public class DatabaseBroker {
 	private Connection conn = null;
 
 	private PreparedStatement ps;
+	
+	private int indexParameter;
 
 	public void setQuery(String query) {
 		if (this.conn == null)
@@ -36,12 +37,20 @@ public class DatabaseBroker {
 
 		try {
 			this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query), Statement.RETURN_GENERATED_KEYS);
-
+			this.indexParameter = 0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
 
+	public void setQueryParameter(Object obj, String parameter) {
+		try {
+			this.ps.setString(this.indexParameter, ((String) getFieldValue(obj, parameter).toString()));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setQueryParameters(Object obj, String... parameters) {
@@ -167,6 +176,7 @@ public class DatabaseBroker {
 		return result;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void setFieldValue(Object obj, String field, String value) {
 
 		String[] fieldChidren = field.split("\\.");

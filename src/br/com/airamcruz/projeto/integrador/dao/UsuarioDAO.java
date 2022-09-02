@@ -6,7 +6,6 @@ import br.com.airamcruz.projeto.integrador.model.UsuarioModel;
 import br.com.airamcruz.projeto.integrador.util.factory.DatabaseBroker;
 
 public class UsuarioDAO {
-
 	
 	private DatabaseBroker broker = new DatabaseBroker();
 	
