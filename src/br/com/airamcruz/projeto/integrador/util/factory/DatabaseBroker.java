@@ -160,8 +160,14 @@ public class DatabaseBroker {
 			boolean accessibleTemp = prop.canAccess(obj);
 
 			prop.setAccessible(true);
-
-			result = prop.get(obj);
+			
+			if (prop.getType() == Date.class) {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				result = formatter.format(prop.get(obj));
+			} else {
+				result = prop.get(obj);				
+			}
+			
 
 			if (fieldChidren.length > 1) {
 				String fields = Arrays.stream(fieldChidren).skip(1).collect(Collectors.joining("."));
@@ -210,7 +216,13 @@ public class DatabaseBroker {
 				} else if (clazz.isEnum()) {
 					prop.set(obj, Enum.valueOf(((Class<Enum>) prop.getType()), value));
 				} else if (clazz == Date.class) {
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat formatter;
+					
+					if(value.length() == 10)
+						formatter = new SimpleDateFormat("yyyy-MM-dd");
+					else 
+						formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+						
 					prop.set(obj, (Date) formatter.parse(value));
 				} else {
 					prop.set(obj, value);
