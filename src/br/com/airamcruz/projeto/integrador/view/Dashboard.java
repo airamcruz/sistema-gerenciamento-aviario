@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import br.com.airamcruz.projeto.integrador.view.fluxocaixa.ListarFluxoCaixa;
 import br.com.airamcruz.projeto.integrador.view.tiposensor.ListarTipoSensor;
 import br.com.airamcruz.projeto.integrador.view.usuario.BuscarUsuarioModal;
 import br.com.airamcruz.projeto.integrador.view.usuario.CadastrarRecuperarUsuario;
@@ -75,7 +76,7 @@ public class Dashboard extends JFrame {
 		SwingUtilities.updateComponentTreeUI(this);
 		
 		setResizable(false);
-		setTitle("Sistema de Agendamento de Barbearias");
+		setTitle("Sistema de Gerenciamento Avi\u00E1rio");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 450);
 		
@@ -121,6 +122,16 @@ public class Dashboard extends JFrame {
 				AdicionarFrameInternal(new ListarTipoSensor(desktopPane.getWidth(), desktopPane.getHeight()));
 			}
 		});
+		
+		JMenu mnFluxoCaixa = new JMenu("Fluxo Caixa");
+		mnFluxoCaixa.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				AdicionarFrameInternal(new ListarFluxoCaixa(desktopPane.getWidth(), desktopPane.getHeight()));
+			}
+		});
+		mnFluxoCaixa.setFont(new Font("Verdana", Font.PLAIN, 12));
+		menuBar.add(mnFluxoCaixa);
 		mnTipoSensor.setFont(new Font("Verdana", Font.PLAIN, 12));
 		menuBar.add(mnTipoSensor);
 		contentPane = new JPanel();

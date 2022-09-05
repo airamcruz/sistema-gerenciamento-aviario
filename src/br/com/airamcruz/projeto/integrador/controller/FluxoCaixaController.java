@@ -37,10 +37,10 @@ public class FluxoCaixaController {
 	public String[] Obter(int id) {
 		FluxoCaixaModel model = this.managerDAO.getFluxoCaixaDAO().Obter(new FluxoCaixaModel(id));
 
-		UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+		//UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
 
 		return new String[] { String.valueOf(model.getId()), this.formato.format(model.getData()),
-				String.valueOf(model.getValor()), String.valueOf(model.getTipoFluxoCaixa()), usuarioTemp.getNome() };
+				String.valueOf(model.getValor()), String.valueOf(model.getTipoFluxoCaixa())};
 	}
 
 	public ArrayList<String[]> ObterTodos() {
@@ -48,26 +48,24 @@ public class FluxoCaixaController {
 
 		for (FluxoCaixaModel model : this.managerDAO.getFluxoCaixaDAO().ObterTodos()) {
 
-			UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+			//UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
 
 			result.add(new String[] { String.valueOf(model.getId()), this.formato.format(model.getData()),
-					String.valueOf(model.getValor()), String.valueOf(model.getTipoFluxoCaixa()),
-					usuarioTemp.getNome() });
+					String.format("R$ %f", model.getValor()), String.valueOf(model.getTipoFluxoCaixa()) });
 		}
 
 		return result;
 	}
 
-	public boolean Atualizar(int id, String data, String tipoFluxoCaixa, String valor, int usuarioId) {
+	public boolean Atualizar(int id, String data, String tipoFluxoCaixa, String valor) {
 		FluxoCaixaModel model = new FluxoCaixaModel(id);
 
 		try {
 			model.setData(formato.parse(data));
 			model.setTipoFluxoCaixa(TipoFluxoCaixaEnum.valueOf(tipoFluxoCaixa));
 			model.setValor(Double.parseDouble(valor));
-			model.setUsuarioModel(new UsuarioModel(usuarioId));
 
-			int result = this.managerDAO.getFluxoCaixaDAO().Inserir(model);
+			int result = this.managerDAO.getFluxoCaixaDAO().Atualizar(model);
 
 			return result > 0;
 		} catch (ParseException e) {

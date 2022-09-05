@@ -82,7 +82,7 @@ public class Main extends JFrame {
 		contentPane.add(lblSistemaDeGesto);
 
 		JLabel label = new JLabel("");
-		label.setIcon(ImageInstance.getImageIcon("barber.png", 120, 170));
+		label.setIcon(ImageInstance.getImageIcon("frango.png", 120, 170));
 		label.setBounds(10, 45, 151, 163);
 		contentPane.add(label);
 
