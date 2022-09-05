@@ -12,7 +12,7 @@ public class UsuarioDAO {
 	public int Inserir(UsuarioModel model) {
 		broker.setQuery("usuario.create");
 		
-		broker.setQueryParameters(model, "id", "nome", "email", "cpf", "perfilUsuario", "senha");
+		broker.setQueryParameters(model, "nome", "email", "cpf", "perfilUsuario", "senha");
 		
 		return broker.executeUpdate();
 	}
@@ -34,7 +34,7 @@ public class UsuarioDAO {
 	public int Atualizar(UsuarioModel model) {
 		broker.setQuery("usuario.update");
 		
-		broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "id");
+		broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "senha", "id");
 		
 		return broker.executeUpdate();
 	}
@@ -45,6 +45,14 @@ public class UsuarioDAO {
 		broker.setQueryParameters(model, "id");
 		
 		return broker.executeUpdate();
+	}
+	
+	public UsuarioModel Autenticar(UsuarioModel model) {
+		broker.setQuery("usuario.auth");
+		
+		broker.setQueryParameters(model, "cpf", "senha");
+		
+		return broker.getObject(UsuarioModel.class, "id", "nome", "email", "cpf", "perfilUsuario");
 	}
 
 }

@@ -37,7 +37,7 @@ public class DatabaseBroker {
 
 		try {
 			this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query), Statement.RETURN_GENERATED_KEYS);
-			this.indexParameter = 0;
+			this.indexParameter = 1;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,6 +47,7 @@ public class DatabaseBroker {
 	public void setQueryParameter(Object obj, String parameter) {
 		try {
 			this.ps.setString(this.indexParameter, ((String) getFieldValue(obj, parameter).toString()));
+			this.indexParameter++;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,17 +102,17 @@ public class DatabaseBroker {
 
 	public <T> T getObject(Class<T> clazz, String... fields) {
 
+		T result = null;
+		
 		try (ResultSet rs = this.ps.executeQuery();) {
 
-			T result = clazz.getDeclaredConstructor().newInstance();
 
 			while (rs.next()) {
+				result = clazz.getDeclaredConstructor().newInstance();
 				for (int i = 0; i < fields.length; i++) {
 					setFieldValue(result, fields[i], rs.getString(i + 1));
 				}
 			}
-
-			return result;
 
 		} catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -119,7 +120,7 @@ public class DatabaseBroker {
 			e.printStackTrace();
 		}
 
-		return null;
+		return result;
 	}
 
 	public <T> List<T> getListObject(Class<T> clazz, String... parameters) {

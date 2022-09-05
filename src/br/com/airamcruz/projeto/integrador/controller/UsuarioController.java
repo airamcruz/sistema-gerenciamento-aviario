@@ -1,35 +1,49 @@
 package br.com.airamcruz.projeto.integrador.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import br.com.airamcruz.projeto.integrador.dao.UsuarioDAO;
 import br.com.airamcruz.projeto.integrador.model.UsuarioModel;
+import br.com.airamcruz.projeto.integrador.util.ManagerDAO;
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.enums.PerfilUsuarioEnum;
 
 public class UsuarioController {
-	
-	private UsuarioDAO usuarioDAO = new UsuarioDAO();
-	
-	public void Inserir(String nome, String email, String cpf, PerfilUsuarioEnum perfilUsuario, String senha) {
-		
+
+	private ManagerDAO managerDAO = ManagerDAO.getInstance();
+
+	public boolean Inserir(String nome, String email, String cpf, String perfilUsuario, String senha) {
+		UsuarioModel model = new UsuarioModel();
+		model.setNome(nome);
+		model.setCpf(cpf);
+		model.setEmail(email);
+		model.setPerfilUsuario(PerfilUsuarioEnum.valueOf(perfilUsuario));
+		model.setSenha(AuthManager.encryptPassword(senha));
+
+		int result = this.managerDAO.getUsuarioDAO().Inserir(model);
+
+		return result > 0;
 	}
-	
-	public void Obter(int id) {
-		UsuarioModel model = this.usuarioDAO.Obter(new UsuarioModel(id));
+
+	public String[] Obter(int id) {
+		UsuarioModel model = this.managerDAO.getUsuarioDAO().Obter(new UsuarioModel(id));
+
+		return new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
+				String.valueOf(model.getPerfilUsuario()) };
 	}
-	
+
 	public ArrayList<String[]> ObterTodos() {
 		ArrayList<String[]> result = new ArrayList<String[]>();
-		
-		for(UsuarioModel model : usuarioDAO.ObterTodos()) {
-			
+
+		for (UsuarioModel model : this.managerDAO.getUsuarioDAO().ObterTodos()) {
+			result.add(new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
+					String.valueOf(model.getPerfilUsuario()) });
 		}
-		
+
 		return result;
 	}
-	
-	public void Atualizar(int id, String nome, String email, String cpf, PerfilUsuarioEnum perfilUsuario, String senha) {
+
+	public boolean Atualizar(int id, String nome, String email, String cpf, PerfilUsuarioEnum perfilUsuario,
+			String senha) {
 
 		UsuarioModel model = new UsuarioModel(id);
 		model.setNome(nome);
@@ -38,12 +52,16 @@ public class UsuarioController {
 		model.setPerfilUsuario(perfilUsuario);
 		model.setSenha(senha);
 
-		int result = this.usuarioDAO.Atualizar(model);
-		
+		int result = this.managerDAO.getUsuarioDAO().Atualizar(model);
+
+		return result > 0;
+
 	}
-	
-	public void Excluir(int id) {
-		int result = this.usuarioDAO.Excluir(new UsuarioModel(id));
+
+	public boolean Excluir(int id) {
+		int result = this.managerDAO.getUsuarioDAO().Excluir(new UsuarioModel(id));
+
+		return result > 0;
 	}
 
 }

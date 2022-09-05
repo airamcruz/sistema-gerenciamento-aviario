@@ -42,7 +42,7 @@ public class SensorDAO {
 	public int Atualizar(SensorModel model) {
 		broker.setQuery("sensor.update");
 		
-		broker.setQueryParameters(model, "descricao", "dataInstalacao", "aviarioModel.id", "tipoSensorModel.id", "id");
+		broker.setQueryParameters(model, "descricao", "dataInstalacao", "aviarioModel.id", "id");
 		
 		return broker.executeUpdate();
 	}

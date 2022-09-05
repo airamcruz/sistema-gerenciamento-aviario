@@ -42,7 +42,7 @@ public class MortalidadeDAO {
 	public int Atualizar(MortalidadeModel model) {
 		broker.setQuery("mortalidade.update");
 		
-		broker.setQueryParameters(model, "motivoMortalidade", "dataMortalidade", "quantidadeFrangos", "loteModel.id", "id");
+		broker.setQueryParameters(model, "motivoMortalidade", "dataMortalidade", "quantidadeFrangos", "id");
 		
 		return broker.executeUpdate();
 	}
