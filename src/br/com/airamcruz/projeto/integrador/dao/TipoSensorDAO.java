@@ -31,6 +31,14 @@ public class TipoSensorDAO {
 		return (ArrayList<TipoSensorModel>)broker.getListObject(TipoSensorModel.class, "id", "descricao");
 	}
 	
+	public ArrayList<TipoSensorModel> ObterPorDescricao(TipoSensorModel model) {
+		broker.setQuery("tipo_sensor.readAllByDescricao");
+		
+		broker.setQueryParameters(model, "descricao");
+
+		return (ArrayList<TipoSensorModel>)broker.getListObject(TipoSensorModel.class, "id", "descricao");
+	}
+	
 	public int Atualizar(TipoSensorModel model) {
 		broker.setQuery("tipo_sensor.update");
 		

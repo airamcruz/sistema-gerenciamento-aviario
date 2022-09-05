@@ -64,6 +64,23 @@ public class SensorController {
 		return result;
 	}
 
+	public ArrayList<String[]> ObterPorTipoSensor(int tipoSensor) {
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		
+		SensorModel temp = new SensorModel();
+		temp.setTipoSensorModel(new TipoSensorModel(tipoSensor));
+
+		for (SensorModel model : this.managerDAO.getSensorDAO().ObterPorTipoSensor(temp)) {
+
+			AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+
+			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao(),
+					this.formato.format(model.getDataInstalacao()), aviarioTemp.getDescricao() });
+		}
+
+		return result;
+	}
+
 	public boolean Atualizar(int id, String descricao, String dataInstalacao, int aviarioId) {
 		try {
 			SensorModel model = new SensorModel(id);

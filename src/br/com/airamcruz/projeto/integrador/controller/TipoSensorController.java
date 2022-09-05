@@ -20,6 +20,10 @@ public class TipoSensorController {
 
 	public String[] Obter(int id) {
 		TipoSensorModel model = this.managerDAO.getTipoSensorDAO().Obter(new TipoSensorModel(id));
+		
+		if(model == null)
+			return null;
+		
 		return new String[] { String.valueOf(model.getId()), model.getDescricao() };
 	}
 
@@ -27,6 +31,16 @@ public class TipoSensorController {
 		ArrayList<String[]> result = new ArrayList<String[]>();
 
 		for (TipoSensorModel model : this.managerDAO.getTipoSensorDAO().ObterTodos()) {
+			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao() });
+		}
+
+		return result;
+	}
+
+	public ArrayList<String[]> ObterPorDescricao(String descricao) {
+		ArrayList<String[]> result = new ArrayList<String[]>();
+
+		for (TipoSensorModel model : this.managerDAO.getTipoSensorDAO().ObterPorDescricao(new TipoSensorModel(descricao))) {
 			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao() });
 		}
 

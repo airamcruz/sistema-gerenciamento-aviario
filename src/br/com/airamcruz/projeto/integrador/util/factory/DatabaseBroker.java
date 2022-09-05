@@ -36,7 +36,12 @@ public class DatabaseBroker {
 			this.conn = DatabaseFactory.getConnection();
 
 		try {
-			this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query), Statement.RETURN_GENERATED_KEYS);
+			
+			if(query.toUpperCase().contains("FROM") || query.toUpperCase().contains("WHERE"))
+				this.ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			else
+				this.ps = conn.prepareStatement(PropertiesUtil.getProperty("sql", query), Statement.RETURN_GENERATED_KEYS);
+			
 			this.indexParameter = 1;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

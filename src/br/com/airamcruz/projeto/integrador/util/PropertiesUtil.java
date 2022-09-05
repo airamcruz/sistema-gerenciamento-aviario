@@ -19,7 +19,7 @@ public class PropertiesUtil {
 		InputStream inputStream = null;
 		
 		try {
-			inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("properties/" + file + ".properties");
+			inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("resource/properties/" + file + ".properties");
 			
 			Properties prop = new Properties();
 			
@@ -44,7 +44,7 @@ public class PropertiesUtil {
 		InputStream inputStream = null;
 		
 		try {
-			inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("properties/" + file + ".properties");
+			inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("resource/properties/" + file + ".properties");
 			
 			Properties prop = new Properties();
 			

@@ -11,22 +11,30 @@ public class UsuarioController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	public boolean Inserir(String nome, String email, String cpf, String perfilUsuario, String senha) {
+	public int Inserir(String nome, String email, String cpf, String perfilUsuario, String senha) {
 		UsuarioModel model = new UsuarioModel();
 		model.setNome(nome);
 		model.setCpf(cpf);
 		model.setEmail(email);
 		model.setPerfilUsuario(PerfilUsuarioEnum.valueOf(perfilUsuario));
-		model.setSenha(AuthManager.encryptPassword(senha));
+		
+		if(senha.isEmpty())
+			model.setSenha(AuthManager.encryptPassword("123456"));
+		else 
+			model.setSenha(AuthManager.encryptPassword(senha));
 
 		int result = this.managerDAO.getUsuarioDAO().Inserir(model);
 
-		return result > 0;
+		return result;
 	}
 
 	public String[] Obter(int id) {
 		UsuarioModel model = this.managerDAO.getUsuarioDAO().Obter(new UsuarioModel(id));
-
+		
+		if (model == null) {
+			return null;
+		}
+		
 		return new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
 				String.valueOf(model.getPerfilUsuario()) };
 	}
@@ -42,15 +50,31 @@ public class UsuarioController {
 		return result;
 	}
 
-	public boolean Atualizar(int id, String nome, String email, String cpf, PerfilUsuarioEnum perfilUsuario,
+	public ArrayList<String[]> ObterPorNome(String nome) {
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		
+		UsuarioModel temp = new UsuarioModel();
+		temp.setNome(nome);
+
+		for (UsuarioModel model : this.managerDAO.getUsuarioDAO().ObterPorNome(temp)) {
+			result.add(new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
+					String.valueOf(model.getPerfilUsuario()) });
+		}
+
+		return result;
+	}
+
+	public boolean Atualizar(int id, String nome, String email, String cpf, String perfilUsuario,
 			String senha) {
 
 		UsuarioModel model = new UsuarioModel(id);
 		model.setNome(nome);
 		model.setCpf(cpf);
 		model.setEmail(email);
-		model.setPerfilUsuario(perfilUsuario);
-		model.setSenha(senha);
+		model.setPerfilUsuario(PerfilUsuarioEnum.valueOf(perfilUsuario));
+		
+		if(!senha.isEmpty())
+			model.setSenha(AuthManager.encryptPassword(senha));
 
 		int result = this.managerDAO.getUsuarioDAO().Atualizar(model);
 

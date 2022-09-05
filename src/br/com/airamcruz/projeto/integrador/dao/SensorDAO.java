@@ -31,10 +31,18 @@ public class SensorDAO {
 		return (ArrayList<SensorModel>)broker.getListObject(SensorModel.class, "id", "descricao", "dataInstalacao", "aviarioModel.id", "tipoSensorModel.id");
 	}
 	
-	public ArrayList<SensorModel> ObterTodosPorAviario(SensorModel model) {
+	public ArrayList<SensorModel> ObterPorAviario(SensorModel model) {
 		broker.setQuery("sensor.readAllByAviario");
 		
 		broker.setQueryParameters(model, "aviarioModel.id");
+		
+		return (ArrayList<SensorModel>)broker.getListObject(SensorModel.class, "id", "descricao", "dataInstalacao", "aviarioModel.id", "tipoSensorModel.id");
+	}
+	
+	public ArrayList<SensorModel> ObterPorTipoSensor(SensorModel model) {
+		broker.setQuery("sensor.readAllByTipoSensor");
+		
+		broker.setQueryParameters(model, "tipoSensorModel.id");
 		
 		return (ArrayList<SensorModel>)broker.getListObject(SensorModel.class, "id", "descricao", "dataInstalacao", "aviarioModel.id", "tipoSensorModel.id");
 	}

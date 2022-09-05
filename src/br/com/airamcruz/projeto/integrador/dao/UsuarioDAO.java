@@ -14,7 +14,7 @@ public class UsuarioDAO {
 		
 		broker.setQueryParameters(model, "nome", "email", "cpf", "perfilUsuario", "senha");
 		
-		return broker.executeUpdate();
+		return broker.executeReturnGeneratedKey();
 	}
 	
 	public UsuarioModel Obter(UsuarioModel model) {
@@ -31,10 +31,37 @@ public class UsuarioDAO {
 		return (ArrayList<UsuarioModel>)broker.getListObject(UsuarioModel.class, "id", "nome", "email", "cpf", "perfilUsuario");
 	}
 	
-	public int Atualizar(UsuarioModel model) {
-		broker.setQuery("usuario.update");
+	public ArrayList<UsuarioModel> ObterPorNome(UsuarioModel model) {
+		broker.setQuery("usuario.readAllByName");
 		
-		broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "senha", "id");
+		broker.setQueryParameters(model, "nome");
+		
+		return (ArrayList<UsuarioModel>)broker.getListObject(UsuarioModel.class, "id", "nome", "email", "cpf", "perfilUsuario");
+	}
+	
+	public int Atualizar(UsuarioModel model) {
+		
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("UPDATE usuario SET nome=?, email=?, perfil=?");
+		
+		if(!model.getSenha().isEmpty())
+			queryBuilder.append(", senha=?");
+		
+		queryBuilder.append(" WHERE id=?;");
+				
+		//broker.setQuery("usuario.update");
+		System.out.println("Query atualizar Usuario: ");
+		
+		String query = queryBuilder.toString();
+		
+		System.out.println(query);
+		
+		broker.setQuery(query);
+
+		if(model.getSenha().isEmpty())
+			broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "id");
+		else
+			broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "senha", "id");
 		
 		return broker.executeUpdate();
 	}
