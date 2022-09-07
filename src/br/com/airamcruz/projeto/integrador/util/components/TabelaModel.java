@@ -82,7 +82,7 @@ public class TabelaModel extends AbstractTableModel {
 	{
 
 		Object[] linha = getLinhas().get(rowIndex);
-		return Integer.parseInt((String)linha[0]) ;
+		return (int)linha[0];
 	}
 
 }

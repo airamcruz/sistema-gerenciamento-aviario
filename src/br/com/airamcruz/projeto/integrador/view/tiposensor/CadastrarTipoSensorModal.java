@@ -77,7 +77,7 @@ public class CadastrarTipoSensorModal extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
-			JLabel lblNewLabel = new JLabel("Descricao do Cargo:");
+			JLabel lblNewLabel = new JLabel("Descricao do Tipo de Sensor:");
 			lblNewLabel.setFont(new Font("Verdana", Font.PLAIN, 12));
 			lblNewLabel.setBounds(10, 11, 159, 14);
 			contentPanel.add(lblNewLabel);

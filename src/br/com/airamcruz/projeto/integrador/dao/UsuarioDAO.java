@@ -44,24 +44,21 @@ public class UsuarioDAO {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("UPDATE usuario SET nome=?, email=?, perfil=?");
 		
-		if(!model.getSenha().isEmpty())
+		if(model.getSenha() != null && !model.getSenha().isEmpty())
 			queryBuilder.append(", senha=?");
 		
 		queryBuilder.append(" WHERE id=?;");
 				
 		//broker.setQuery("usuario.update");
-		System.out.println("Query atualizar Usuario: ");
 		
 		String query = queryBuilder.toString();
 		
-		System.out.println(query);
-		
 		broker.setQuery(query);
 
-		if(model.getSenha().isEmpty())
-			broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "id");
-		else
+		if(model.getSenha() != null && !model.getSenha().isEmpty())
 			broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "senha", "id");
+		else
+			broker.setQueryParameters(model, "nome", "email", "perfilUsuario", "id");
 		
 		return broker.executeUpdate();
 	}

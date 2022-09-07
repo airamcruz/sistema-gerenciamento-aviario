@@ -27,33 +27,31 @@ import javax.swing.border.MatteBorder;
 import javax.swing.table.TableColumn;
 
 import br.com.airamcruz.projeto.integrador.controller.UsuarioController;
+import br.com.airamcruz.projeto.integrador.model.UsuarioModel;
 import br.com.airamcruz.projeto.integrador.util.components.TabelaModel;
 
 public class BuscarUsuarioModal extends JDialog {
 
 	private static final long serialVersionUID = 300371925310363890L;
-	
+
 	private JTextField txtNome;
 	private JTable table;
 	private JButton btnBuscar;
-	
+
 	private TabelaModel modeloTabela;
-	
+
 	private UsuarioController Controller = new UsuarioController();
-	
+
 	private int idClienteSelecionado = 0;
-	
-	public int getClienteSelecionado()
-	{
+
+	public int getClienteSelecionado() {
 		return this.idClienteSelecionado;
 	}
-	
-	private void close()
-	{
+
+	private void close() {
 		this.dispose();
 	}
-	
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -87,24 +85,24 @@ public class BuscarUsuarioModal extends JDialog {
 			e1.printStackTrace();
 		}
 		SwingUtilities.updateComponentTreeUI(this);
-		
+
 		setModal(true);
 		setBounds(100, 100, 600, 350);
 		getContentPane().setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel panel = new JPanel();
 		panel.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		getContentPane().add(panel, BorderLayout.NORTH);
-		
+
 		JLabel lblNewLabel = new JLabel("Nome do Cliente:");
 		lblNewLabel.setFont(new Font("Verdana", Font.PLAIN, 12));
 		panel.add(lblNewLabel);
-		
+
 		txtNome = new JTextField();
 		txtNome.setFont(new Font("Verdana", Font.PLAIN, 12));
 		txtNome.setColumns(15);
 		panel.add(txtNome);
-		
+
 		btnBuscar = new JButton("Buscar Cliente");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -113,23 +111,23 @@ public class BuscarUsuarioModal extends JDialog {
 		});
 		btnBuscar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		panel.add(btnBuscar);
-		
+
 		JPanel panel_1 = new JPanel();
 		getContentPane().add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(new BorderLayout(0, 0));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		panel_1.add(scrollPane, BorderLayout.CENTER);
-		
+
 		table = new JTable();
 		scrollPane.setViewportView(table);
-		
+
 		JPanel panelBusca = new JPanel();
 		panelBusca.setVisible(false);
 		FlowLayout flowLayout = (FlowLayout) panelBusca.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		getContentPane().add(panelBusca, BorderLayout.SOUTH);
-		
+
 		JButton btnSelecionar = new JButton("Selecionar Cliente");
 		btnSelecionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -139,22 +137,21 @@ public class BuscarUsuarioModal extends JDialog {
 		});
 		btnSelecionar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		panelBusca.add(btnSelecionar);
-		if(buscar)
+		if (buscar)
 			panelBusca.setVisible(true);
 	}
-	
-	private void RecarregarDadosTabela(List<String[]> colunas)
-	{
+
+	private void RecarregarDadosTabela(List<UsuarioModel> colunas) {
 		modeloTabela.clear();
-		for(String[] col : colunas)
-		{
-			modeloTabela.addRow(col);
+		for (UsuarioModel user : colunas) {
+			
+			modeloTabela.addRow(new Object[] { user.getId(), user.getNome(), user.getCpf(), user.getEmail(),
+					user.getPerfilUsuario() });
 		}
 	}
-	
-	private void PreencherTabela(List<String[]> lista)
-	{
-		String[] Colunas = new String[] {"ID", "NOME", "CPF", "EMAIL", "PERFIL"};
+
+	private void PreencherTabela(List<UsuarioModel> lista) {
+		String[] Colunas = new String[] { "ID", "NOME", "CPF", "EMAIL", "PERFIL" };
 		modeloTabela = new TabelaModel(Colunas, new ArrayList<Object[]>());
 		table.setModel(modeloTabela);
 		RecarregarDadosTabela(lista);
@@ -162,12 +159,11 @@ public class BuscarUsuarioModal extends JDialog {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
 	}
-	private void  ajustarColunasTabela()
-	{
-		ArrayList<TableColumn> colunas=Collections.list(table.getColumnModel().getColumns());
 
-		for(TableColumn coluna : colunas)
-		{
+	private void ajustarColunasTabela() {
+		ArrayList<TableColumn> colunas = Collections.list(table.getColumnModel().getColumns());
+
+		for (TableColumn coluna : colunas) {
 			coluna.setResizable(false);
 		}
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

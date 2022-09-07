@@ -31,7 +31,7 @@ public class FluxoCaixaDAO {
 		return (ArrayList<FluxoCaixaModel>)broker.getListObject(FluxoCaixaModel.class, "id", "data", "tipoFluxoCaixa", "valor", "usuarioModel.id");
 	}
 	
-	public ArrayList<FluxoCaixaModel> ObterTodosPorUsuario(FluxoCaixaModel model) {
+	public ArrayList<FluxoCaixaModel> ObterPorUsuario(FluxoCaixaModel model) {
 		broker.setQuery("fluxo_caixa.readAllByUser");
 		
 		broker.setQueryParameters(model, "usuarioModel.id");

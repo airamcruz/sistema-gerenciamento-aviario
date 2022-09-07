@@ -12,7 +12,7 @@ public class BoletimSanitarioController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 
 	public boolean Inserir(String parecer, String data, int aviarioId) {
 		try {
@@ -32,24 +32,25 @@ public class BoletimSanitarioController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public BoletimSanitarioModel Obter(int id) {
 		BoletimSanitarioModel model = this.managerDAO.getBoletimSanitarioDAO().Obter(new BoletimSanitarioModel(id));
 
-		AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), model.getParecer(), this.formato.format(model.getData()),
-				aviarioTemp.getDescricao() };
+		carregarRelacionamento(model);
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<BoletimSanitarioModel> ObterTodos() {
+		ArrayList<BoletimSanitarioModel> result = new ArrayList<BoletimSanitarioModel>();
 
 		for (BoletimSanitarioModel model : this.managerDAO.getBoletimSanitarioDAO().ObterTodos()) {
 
-			AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+			model.setAviarioModel(this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel()));
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getParecer(),
-					this.formato.format(model.getData()), aviarioTemp.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
@@ -77,5 +78,9 @@ public class BoletimSanitarioController {
 		int result = this.managerDAO.getBoletimSanitarioDAO().Excluir(new BoletimSanitarioModel(id));
 
 		return result > 0;
+	}
+
+	private void carregarRelacionamento(BoletimSanitarioModel model) {
+		model.setAviarioModel(this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel()));
 	}
 }

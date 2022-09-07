@@ -6,13 +6,14 @@ import java.util.ArrayList;
 
 import br.com.airamcruz.projeto.integrador.model.AviarioModel;
 import br.com.airamcruz.projeto.integrador.model.LoteModel;
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.ManagerDAO;
 
 public class LoteController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
-
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 
 	public boolean Inserir(String descricao, String dataCompra, int quantidadeFrangos, int aviarioId) {
 		try {
@@ -34,26 +35,60 @@ public class LoteController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public LoteModel Obter(int id) {
 		LoteModel model = this.managerDAO.getLoteDAO().Obter(new LoteModel(id));
 
-		AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), model.getDescricao(),
-				this.formato.format(model.getDataCompra()), String.valueOf(model.getQuantidadeFrangos()),
-				this.formato.format(model.getPrevisaoAbate()), aviarioTemp.getDescricao() };
+		carregarRelacionamento(model);
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<LoteModel> ObterTodos() {
+		ArrayList<LoteModel> result = new ArrayList<LoteModel>();
 
 		for (LoteModel model : this.managerDAO.getLoteDAO().ObterTodos()) {
 
-			AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+			carregarRelacionamento(model);
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao(),
-					this.formato.format(model.getDataCompra()), String.valueOf(model.getQuantidadeFrangos()),
-					this.formato.format(model.getPrevisaoAbate()), aviarioTemp.getDescricao() });
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<LoteModel> ObterPorAviario(int aviarioId) {
+		ArrayList<LoteModel> result = new ArrayList<LoteModel>();
+		
+		LoteModel temp = new LoteModel();
+		temp.setAviarioModel(new AviarioModel(aviarioId));
+
+		for (LoteModel model : this.managerDAO.getLoteDAO().ObterPorAviario(temp)) {
+
+			carregarRelacionamento(model);
+
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<LoteModel> ObterPorUsuario() {
+		ArrayList<LoteModel> result = new ArrayList<LoteModel>();
+		
+		AviarioModel aviarioTemp = new AviarioModel();
+		aviarioTemp.setUsuarioModel(AuthManager.getInstance().getUsuario());
+		
+		LoteModel temp = new LoteModel();
+		temp.setAviarioModel(aviarioTemp);
+
+		for (LoteModel model : this.managerDAO.getLoteDAO().ObterPorUsuario(temp)) {
+
+			carregarRelacionamento(model);
+
+			result.add(model);
 		}
 
 		return result;
@@ -84,6 +119,10 @@ public class LoteController {
 		int result = this.managerDAO.getLoteDAO().Excluir(new LoteModel(id));
 
 		return result > 0;
+	}
+
+	private void carregarRelacionamento(LoteModel model) {
+		model.setAviarioModel(this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel()));
 	}
 
 }

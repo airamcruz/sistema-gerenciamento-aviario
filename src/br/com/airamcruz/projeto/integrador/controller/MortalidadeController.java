@@ -12,7 +12,7 @@ public class MortalidadeController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 
 	public boolean Inserir(String motivoMortalidade, String dataMortalidade, int quantidadeFrangos, int loteId) {
 		try {
@@ -34,26 +34,25 @@ public class MortalidadeController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public MortalidadeModel Obter(int id) {
 		MortalidadeModel model = this.managerDAO.getMortalidadeDAO().Obter(new MortalidadeModel(id));
 
-		LoteModel loteTemp = this.managerDAO.getLoteDAO().Obter(model.getLoteModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), model.getMotivoMortalidade(),
-				this.formato.format(model.getDataMortalidade()), String.valueOf(model.getQuantidadeFrangos()),
-				loteTemp.getDescricao() };
+		carregarRelacionamento(model);
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<MortalidadeModel> ObterTodos() {
+		ArrayList<MortalidadeModel> result = new ArrayList<MortalidadeModel>();
 
 		for (MortalidadeModel model : this.managerDAO.getMortalidadeDAO().ObterTodos()) {
 
-			LoteModel loteTemp = this.managerDAO.getLoteDAO().Obter(model.getLoteModel());
+			carregarRelacionamento(model);
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getMotivoMortalidade(),
-					this.formato.format(model.getDataMortalidade()), String.valueOf(model.getQuantidadeFrangos()),
-					loteTemp.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
@@ -83,6 +82,10 @@ public class MortalidadeController {
 		int result = this.managerDAO.getMortalidadeDAO().Excluir(new MortalidadeModel(id));
 
 		return result > 0;
+	}
+
+	private void carregarRelacionamento(MortalidadeModel model) {
+		model.setLoteModel(this.managerDAO.getLoteDAO().Obter(model.getLoteModel()));
 	}
 
 }

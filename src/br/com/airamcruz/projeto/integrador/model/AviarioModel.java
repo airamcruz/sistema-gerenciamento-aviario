@@ -77,5 +77,11 @@ public class AviarioModel {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return descricao;
 	}	
+	
 }

@@ -13,7 +13,7 @@ public class SensorController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 
 	public boolean Inserir(String descricao, String dataInstalacao, int aviarioId, int tipoSensorId) {
 		try {
@@ -35,47 +35,58 @@ public class SensorController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public SensorModel Obter(int id) {
 		SensorModel model = this.managerDAO.getSensorDAO().Obter(new SensorModel(id));
 
-		TipoSensorModel tipoSensorTemp = this.managerDAO.getTipoSensorDAO().Obter(model.getTipoSensorModel());
+		if (model == null)
+			return null;
 
-		AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+		carregarRelacionamento(model);
 
-		return new String[] { String.valueOf(model.getId()), model.getDescricao(),
-				this.formato.format(model.getDataInstalacao()), aviarioTemp.getDescricao(),
-				tipoSensorTemp.getDescricao() };
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<SensorModel> ObterTodos() {
+		ArrayList<SensorModel> result = new ArrayList<SensorModel>();
 
 		for (SensorModel model : this.managerDAO.getSensorDAO().ObterTodos()) {
 
-			TipoSensorModel tipoSensorTemp = this.managerDAO.getTipoSensorDAO().Obter(model.getTipoSensorModel());
+			carregarRelacionamento(model);
 
-			AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
-
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao(),
-					this.formato.format(model.getDataInstalacao()), aviarioTemp.getDescricao(),
-					tipoSensorTemp.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
 	}
 
-	public ArrayList<String[]> ObterPorTipoSensor(int tipoSensor) {
-		ArrayList<String[]> result = new ArrayList<String[]>();
-		
+	public ArrayList<SensorModel> ObterPorAviario(int idAviario) {
+		ArrayList<SensorModel> result = new ArrayList<SensorModel>();
+
+
+		SensorModel temp = new SensorModel();
+		temp.setAviarioModel(new AviarioModel(idAviario));
+
+		for (SensorModel model : this.managerDAO.getSensorDAO().ObterPorAviario(temp)) {
+
+			carregarRelacionamento(model);
+
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<SensorModel> ObterPorTipoSensor(int tipoSensor) {
+		ArrayList<SensorModel> result = new ArrayList<SensorModel>();
+
 		SensorModel temp = new SensorModel();
 		temp.setTipoSensorModel(new TipoSensorModel(tipoSensor));
 
 		for (SensorModel model : this.managerDAO.getSensorDAO().ObterPorTipoSensor(temp)) {
 
-			AviarioModel aviarioTemp = this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel());
+			carregarRelacionamento(model);
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao(),
-					this.formato.format(model.getDataInstalacao()), aviarioTemp.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
@@ -105,6 +116,11 @@ public class SensorController {
 		int result = this.managerDAO.getSensorDAO().Excluir(new SensorModel(id));
 
 		return result > 0;
+	}
+
+	private void carregarRelacionamento(SensorModel model) {
+		model.setTipoSensorModel(this.managerDAO.getTipoSensorDAO().Obter(model.getTipoSensorModel()));
+		model.setAviarioModel(this.managerDAO.getAviarioDAO().Obter(model.getAviarioModel()));
 	}
 
 }

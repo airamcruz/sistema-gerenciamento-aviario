@@ -23,7 +23,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
+import br.com.airamcruz.projeto.integrador.util.enums.PerfilUsuarioEnum;
+import br.com.airamcruz.projeto.integrador.view.aviario.ListarAviario;
 import br.com.airamcruz.projeto.integrador.view.fluxocaixa.ListarFluxoCaixa;
+import br.com.airamcruz.projeto.integrador.view.lote.ListarLote;
 import br.com.airamcruz.projeto.integrador.view.tiposensor.ListarTipoSensor;
 import br.com.airamcruz.projeto.integrador.view.usuario.BuscarUsuarioModal;
 import br.com.airamcruz.projeto.integrador.view.usuario.CadastrarRecuperarUsuario;
@@ -83,9 +87,8 @@ public class Dashboard extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("Usuario");
-		mnNewMenu.setFont(new Font("Verdana", Font.PLAIN, 12));
-		menuBar.add(mnNewMenu);
+		JMenu mnUsuario = new JMenu("Usuario");
+		mnUsuario.setFont(new Font("Verdana", Font.PLAIN, 12));
 		
 		JMenuItem mCadastrarUsuario = new JMenuItem("Cadastrar/Recuperar");
 		mCadastrarUsuario.setFont(new Font("Verdana", Font.PLAIN, 12));
@@ -99,10 +102,10 @@ public class Dashboard extends JFrame {
 				}
 			}
 		});
-		mnNewMenu.add(mCadastrarUsuario);
+		mnUsuario.add(mCadastrarUsuario);
 		
 		JSeparator separator = new JSeparator();
-		mnNewMenu.add(separator);
+		mnUsuario.add(separator);
 		
 		JMenuItem mBuscarUsuario = new JMenuItem("Buscar Usuario");
 		mBuscarUsuario.addActionListener(new ActionListener() {
@@ -113,7 +116,7 @@ public class Dashboard extends JFrame {
 			}
 		});
 		mBuscarUsuario.setFont(new Font("Verdana", Font.PLAIN, 12));
-		mnNewMenu.add(mBuscarUsuario);
+		mnUsuario.add(mBuscarUsuario);
 		
 		JMenu mnTipoSensor = new JMenu("Tipo Sensor");
 		mnTipoSensor.addMouseListener(new MouseAdapter() {
@@ -130,10 +133,33 @@ public class Dashboard extends JFrame {
 				AdicionarFrameInternal(new ListarFluxoCaixa(desktopPane.getWidth(), desktopPane.getHeight()));
 			}
 		});
+		
+		JMenu mnAviario = new JMenu("Aviario");
+		mnAviario.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				AdicionarFrameInternal(new ListarAviario(desktopPane.getWidth(), desktopPane.getHeight()));
+			}
+		});
+		mnAviario.setFont(new Font("Verdana", Font.PLAIN, 12));
+		
+		JMenu mnLote = new JMenu("Lote");
+		mnLote.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				AdicionarFrameInternal(new ListarLote(desktopPane.getWidth(), desktopPane.getHeight()));
+			}
+		});
+		mnLote.setFont(new Font("Verdana", Font.PLAIN, 12));
 		mnFluxoCaixa.setFont(new Font("Verdana", Font.PLAIN, 12));
-		menuBar.add(mnFluxoCaixa);
 		mnTipoSensor.setFont(new Font("Verdana", Font.PLAIN, 12));
-		menuBar.add(mnTipoSensor);
+		menuBar.add(mnAviario);
+		menuBar.add(mnLote);
+		menuBar.add(mnFluxoCaixa);
+		if(AuthManager.getInstance().getUsuario().getPerfilUsuario() == PerfilUsuarioEnum.ADMINISTRADOR) {
+			menuBar.add(mnUsuario);
+			menuBar.add(mnTipoSensor);
+		}
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

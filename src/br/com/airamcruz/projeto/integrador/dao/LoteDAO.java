@@ -31,10 +31,18 @@ public class LoteDAO {
 		return (ArrayList<LoteModel>)broker.getListObject(LoteModel.class, "id", "descricao", "dataCompra", "quantidadeFrangos", "previsaoAbate", "aviarioModel.id");
 	}
 	
-	public ArrayList<LoteModel> ObterTodosPorAviario(LoteModel model) {
+	public ArrayList<LoteModel> ObterPorAviario(LoteModel model) {
 		broker.setQuery("lote.readAllByAviario");
 		
 		broker.setQueryParameters(model, "aviarioModel.id");
+		
+		return (ArrayList<LoteModel>)broker.getListObject(LoteModel.class, "id", "descricao", "dataCompra", "quantidadeFrangos", "previsaoAbate", "aviarioModel.id");
+	}
+	
+	public ArrayList<LoteModel> ObterPorUsuario(LoteModel model) {
+		broker.setQuery("lote.readAllByUsuario");
+		
+		broker.setQueryParameters(model, "aviarioModel.usuarioModel.id");
 		
 		return (ArrayList<LoteModel>)broker.getListObject(LoteModel.class, "id", "descricao", "dataCompra", "quantidadeFrangos", "previsaoAbate", "aviarioModel.id");
 	}

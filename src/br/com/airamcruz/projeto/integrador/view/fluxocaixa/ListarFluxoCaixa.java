@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,13 +35,13 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
 import br.com.airamcruz.projeto.integrador.controller.FluxoCaixaController;
+import br.com.airamcruz.projeto.integrador.model.FluxoCaixaModel;
 import br.com.airamcruz.projeto.integrador.util.components.ImageInstance;
 import br.com.airamcruz.projeto.integrador.util.components.TabelaModel;
 
 public class ListarFluxoCaixa extends JInternalFrame {
 
 	private static ListarFluxoCaixa frame;
-	private MaskFormatter mascara = null;
 	private JPanel conteudo;
 	private JPanel barraInferior;
 	private JButton btnExcluir;
@@ -49,7 +50,9 @@ public class ListarFluxoCaixa extends JInternalFrame {
 
 	private JTable table;
 	private TabelaModel modelo;
+
 	FluxoCaixaController Controller = new FluxoCaixaController();
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	/**
 	 * Launch the application.
@@ -78,7 +81,7 @@ public class ListarFluxoCaixa extends JInternalFrame {
 		addInternalFrameListener(new InternalFrameAdapter() {
 			@Override
 			public void internalFrameOpened(InternalFrameEvent e) {
-				PreencherTabela(Controller.ObterTodos());
+				PreencherTabela(Controller.ObterPorUsuario());
 			}
 		});
 		setClosable(true);
@@ -104,10 +107,10 @@ public class ListarFluxoCaixa extends JInternalFrame {
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Controller.Excluir(IdSelected)) {
-					JOptionPane.showMessageDialog(null, "Agendamento excluido com sucesso!");
-					RecarregarDadosTabela(Controller.ObterTodos());
+					JOptionPane.showMessageDialog(null, "Fluxo de caixa excluido com sucesso!");
+					RecarregarDadosTabela(Controller.ObterPorUsuario());
 				} else {
-					JOptionPane.showMessageDialog(null, "Não foi Agendamento excluir o Cargo!");
+					JOptionPane.showMessageDialog(null, "Não foi excluir o Fluxo de caixa!");
 				}
 			}
 		});
@@ -198,14 +201,15 @@ public class ListarFluxoCaixa extends JInternalFrame {
 		setBorder(null);
 	}
 
-	private void RecarregarDadosTabela(List<String[]> linhas) {
+	private void RecarregarDadosTabela(List<FluxoCaixaModel> linhas) {
 		modelo.clear();
-		for (String[] row : linhas) {
-			modelo.addRow(row);
+		for (FluxoCaixaModel row : linhas) {
+			modelo.addRow(new Object[] { row.getId(), formatter.format(row.getData()),
+					String.format("R$ %.02f", row.getValor()), row.getTipoFluxoCaixa() });
 		}
 	}
 
-	private void PreencherTabela(List<String[]> linhas) {
+	private void PreencherTabela(List<FluxoCaixaModel> linhas) {
 		String[] Colunas = new String[] { "ID", "DATA", "VALOR", "TIPO FLUXO CAIXA" };
 
 		modelo = new TabelaModel(Colunas, new ArrayList<Object[]>());
@@ -239,7 +243,7 @@ public class ListarFluxoCaixa extends JInternalFrame {
 		jdialog.setLocationRelativeTo(frame);
 		jdialog.setVisible(true);
 		if (jdialog.sucessoAlteracao()) {
-			RecarregarDadosTabela(Controller.ObterTodos());
+			RecarregarDadosTabela(Controller.ObterPorUsuario());
 		}
 	}
 }

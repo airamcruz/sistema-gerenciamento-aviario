@@ -1,4 +1,4 @@
-package br.com.airamcruz.projeto.integrador.view.fluxocaixa;
+package br.com.airamcruz.projeto.integrador.view.usuario;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -18,10 +18,10 @@ import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -35,32 +35,38 @@ import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
 import com.github.lgooddatepicker.optionalusertools.TimeVetoPolicy;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
+import br.com.airamcruz.projeto.integrador.controller.AviarioController;
 import br.com.airamcruz.projeto.integrador.controller.FluxoCaixaController;
+import br.com.airamcruz.projeto.integrador.controller.SensorController;
+import br.com.airamcruz.projeto.integrador.controller.TipoSensorController;
+import br.com.airamcruz.projeto.integrador.model.AviarioModel;
 import br.com.airamcruz.projeto.integrador.model.FluxoCaixaModel;
+import br.com.airamcruz.projeto.integrador.model.SensorModel;
+import br.com.airamcruz.projeto.integrador.model.TipoSensorModel;
 import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.enums.TipoFluxoCaixaEnum;
 
-public class CadastroInformacaoFluxoCaixaModal extends JDialog {
+public class CadastroInformacaoSensorModal extends JDialog {
 
 	private static final long serialVersionUID = 7171037448266548682L;
 	
-	private static CadastroInformacaoFluxoCaixaModal dialog;
+	private static CadastroInformacaoSensorModal dialog;
 	private final JPanel contentPanel = new JPanel();
 	private boolean sucessoAlteracao = false;
 	private DatePicker datePicker;
 
-	FluxoCaixaController Controller = new FluxoCaixaController();
+	SensorController Controller = new SensorController();
 
-	private FluxoCaixaModel fluxoCaixaModel = null;
-
-	private JFormattedTextField txtValor;
+	private SensorModel sensorModel = null;
+	private JComboBox cbxTipoDoSensor;
+	private JTextField txtDescricao;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			dialog = new CadastroInformacaoFluxoCaixaModal(0);
+			dialog = new CadastroInformacaoSensorModal(0, 0);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -81,12 +87,12 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 	 * 
 	 * @throws ParseException
 	 */
-	public CadastroInformacaoFluxoCaixaModal(int id) throws ParseException {
+	public CadastroInformacaoSensorModal(int id, int idAviario) {
 
 		if (id == 0) {
-			this.fluxoCaixaModel = null;
+			this.sensorModel = null;
 		} else {
-			this.fluxoCaixaModel = Controller.Obter(id);
+			this.sensorModel = Controller.Obter(id);
 		}
 
 		addWindowListener(new WindowAdapter() {
@@ -95,7 +101,7 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 			}
 		});
 		setResizable(false);
-		setTitle("Informa\u00E7\u00F5es Fluxo de Caixa");
+		setTitle("Informa\u00E7\u00F5es do Sensor");
 		setModal(true);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -117,7 +123,7 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		DatePickerSettings dateSettings = new DatePickerSettings();
 		datePicker = new DatePicker(dateSettings);
 		if (id > 0) {
-			datePicker.setDate(fluxoCaixaModel.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			datePicker.setDate(sensorModel.getDataInstalacao().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		}
 		datePicker.addDateChangeListener(new DateChangeListener() {
 			public void dateChanged(DateChangeEvent arg0) {
@@ -129,45 +135,39 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		// LocalDate.now().plusDays(20));
 		// datePicker.getComponentDateTextField().setEnabled(false);
 		//datePicker.getComponentDateTextField().setEditable(false);
-		datePicker.setBounds(10, 31, 204, 20);
+		datePicker.setBounds(10, 86, 204, 20);
 		contentPanel.add(datePicker);
 
-		JLabel lblData = new JLabel("Data:");
+		JLabel lblData = new JLabel(" Instala\u00E7\u00E3o Data:");
 		lblData.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblData.setBounds(12, 12, 159, 14);
+		lblData.setBounds(12, 67, 159, 14);
 		contentPanel.add(lblData);
 
-		JLabel lblTipoFluixo = new JLabel("Perfil:");
-		lblTipoFluixo.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblTipoFluixo.setBounds(245, 12, 104, 14);
-		contentPanel.add(lblTipoFluixo);
+		JLabel lblTipoDoSensor = new JLabel("Tipo do sensor:");
+		lblTipoDoSensor.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblTipoDoSensor.setBounds(245, 64, 104, 14);
 
-		JComboBox<TipoFluxoCaixaEnum> cbxTipoFluxo = new JComboBox<TipoFluxoCaixaEnum>(TipoFluxoCaixaEnum.values());
-		cbxTipoFluxo.setBounds(245, 32, 192, 22);
-		contentPanel.add(cbxTipoFluxo);
-
-		JLabel lblValor = new JLabel("Valor:");
-		lblValor.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblValor.setBounds(10, 65, 300, 14);
-		contentPanel.add(lblValor);
-
-		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-		format.setMaximumFractionDigits(2);
-
-		NumberFormatter formatter = new NumberFormatter(format);
-		formatter.setAllowsInvalid(false);
-		formatter.setOverwriteMode(true);
-
-		txtValor = new JFormattedTextField(formatter);
+		cbxTipoDoSensor = new JComboBox();
+		cbxTipoDoSensor.setBounds(245, 84, 192, 22);
+		carregarComboBox();
+		if(id == 0) {
+			contentPanel.add(lblTipoDoSensor);
+			contentPanel.add(cbxTipoDoSensor);			
+		}
+		
+		txtDescricao = new JTextField();
+		txtDescricao.setBounds(10, 32, 427, 20);
 
 		if (id > 0)
-			txtValor.setValue(fluxoCaixaModel.getValor());
-		else
-			txtValor.setValue(0.0);
-
-		txtValor.setColumns(10);
-		txtValor.setBounds(10, 86, 204, 20);
-		contentPanel.add(txtValor);
+			txtDescricao.setText(sensorModel.getDescricao());
+		
+		contentPanel.add(txtDescricao);
+		txtDescricao.setColumns(10);
+		
+		JLabel lblDescricao = new JLabel("Descri\u00E7\u00E3o:");
+		lblDescricao.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblDescricao.setBounds(12, 12, 425, 14);
+		contentPanel.add(lblDescricao);
 
 		{
 			JPanel buttonPane = new JPanel();
@@ -189,7 +189,7 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 				btnSalvar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 												
-						if (datePicker.getDate() == null || txtValor.getText().isEmpty()) {
+						if (datePicker.getDate() == null || cbxTipoDoSensor.getSelectedItem() == null || txtDescricao.getText().isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Campos não preenchidos!");
 							return;
 						}
@@ -204,12 +204,9 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 							String dataS = formato.format(date);
 
 							if (id == 0) {
-
-								resultado = Controller.Inserir(dataS, cbxTipoFluxo.getSelectedItem().toString(),
-										txtValor.getValue().toString(), AuthManager.getInstance().getUsuario().getId());
+								resultado = Controller.Inserir(txtDescricao.getText(), dataS, idAviario, ((TipoSensorModel)cbxTipoDoSensor.getSelectedItem()).getId());
 							} else {
-								resultado = Controller.Atualizar(id, dataS, cbxTipoFluxo.getSelectedItem().toString(),
-										txtValor.getValue().toString());
+								resultado = Controller.Atualizar(id, txtDescricao.getText(), dataS, idAviario);
 							}
 
 							if (resultado) {
@@ -244,6 +241,13 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		public boolean isTimeAllowed(LocalTime time) {
 			// Only allow times from 9a to 5p, inclusive.
 			return PickerUtilities.isLocalTimeInRange(time, LocalTime.of(9, 00), LocalTime.of(17, 00), true);
+		}
+	}
+
+	private void carregarComboBox() {
+		TipoSensorController tipoSensorController = new TipoSensorController();
+		for (TipoSensorModel model : tipoSensorController.ObterTodos()) {
+			cbxTipoDoSensor.addItem(model);
 		}
 	}
 }

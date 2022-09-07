@@ -17,10 +17,10 @@ public class UsuarioController {
 		model.setCpf(cpf);
 		model.setEmail(email);
 		model.setPerfilUsuario(PerfilUsuarioEnum.valueOf(perfilUsuario));
-		
-		if(senha.isEmpty())
+
+		if (senha.isEmpty())
 			model.setSenha(AuthManager.encryptPassword("123456"));
-		else 
+		else
 			model.setSenha(AuthManager.encryptPassword(senha));
 
 		int result = this.managerDAO.getUsuarioDAO().Inserir(model);
@@ -28,52 +28,47 @@ public class UsuarioController {
 		return result;
 	}
 
-	public String[] Obter(int id) {
+	public UsuarioModel Obter(int id) {
 		UsuarioModel model = this.managerDAO.getUsuarioDAO().Obter(new UsuarioModel(id));
-		
-		if (model == null) {
+
+		if (model == null)
 			return null;
-		}
-		
-		return new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
-				String.valueOf(model.getPerfilUsuario()) };
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<UsuarioModel> ObterTodos() {
+		ArrayList<UsuarioModel> result = new ArrayList<UsuarioModel>();
 
 		for (UsuarioModel model : this.managerDAO.getUsuarioDAO().ObterTodos()) {
-			result.add(new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
-					String.valueOf(model.getPerfilUsuario()) });
+			result.add(model);
 		}
 
 		return result;
 	}
 
-	public ArrayList<String[]> ObterPorNome(String nome) {
-		ArrayList<String[]> result = new ArrayList<String[]>();
-		
+	public ArrayList<UsuarioModel> ObterPorNome(String nome) {
+		ArrayList<UsuarioModel> result = new ArrayList<UsuarioModel>();
+
 		UsuarioModel temp = new UsuarioModel();
 		temp.setNome(nome);
 
 		for (UsuarioModel model : this.managerDAO.getUsuarioDAO().ObterPorNome(temp)) {
-			result.add(new String[] { String.valueOf(model.getId()), model.getNome(), model.getCpf(), model.getEmail(),
-					String.valueOf(model.getPerfilUsuario()) });
+			result.add(model);
 		}
 
 		return result;
 	}
 
-	public boolean Atualizar(int id, String nome, String email, String cpf, String perfilUsuario,
-			String senha) {
+	public boolean Atualizar(int id, String nome, String email, String cpf, String perfilUsuario, String senha) {
 
 		UsuarioModel model = new UsuarioModel(id);
 		model.setNome(nome);
 		model.setCpf(cpf);
 		model.setEmail(email);
 		model.setPerfilUsuario(PerfilUsuarioEnum.valueOf(perfilUsuario));
-		
-		if(!senha.isEmpty())
+
+		if (!senha.isEmpty())
 			model.setSenha(AuthManager.encryptPassword(senha));
 
 		int result = this.managerDAO.getUsuarioDAO().Atualizar(model);

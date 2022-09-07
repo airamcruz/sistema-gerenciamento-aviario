@@ -51,7 +51,14 @@ public class DatabaseBroker {
 
 	public void setQueryParameter(Object obj, String parameter) {
 		try {
-			this.ps.setString(this.indexParameter, ((String) getFieldValue(obj, parameter).toString()));
+			
+			Object value = getFieldValue(obj, parameter);
+			
+			if(value != null)
+				this.ps.setString(this.indexParameter, ((String) value.toString()));
+			else
+				this.ps.setString(this.indexParameter, null);
+			
 			this.indexParameter++;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +69,13 @@ public class DatabaseBroker {
 	public void setQueryParameters(Object obj, String... parameters) {
 		try {
 			for (int i = 0; i < parameters.length; i++) {
-				this.ps.setString(i + 1, ((String) getFieldValue(obj, parameters[i]).toString()));
+				Object value = getFieldValue(obj, parameters[i]);
+				
+				if(value != null)
+					this.ps.setString(i + 1, ((String) value.toString()));
+				else
+					this.ps.setString(i + 1, null);
+				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -168,7 +181,8 @@ public class DatabaseBroker {
 			
 			if (prop.getType() == Date.class) {
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				result = formatter.format(prop.get(obj));
+				Object temp = prop.get(obj);
+				result = temp != null ? formatter.format(prop.get(obj)) : null;
 			} else {
 				result = prop.get(obj);				
 			}
@@ -190,6 +204,9 @@ public class DatabaseBroker {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void setFieldValue(Object obj, String field, String value) {
+		
+		if(value == null)
+			return;
 
 		String[] fieldChidren = field.split("\\.");
 

@@ -14,7 +14,7 @@ public class AviarioDAO {
 		
 		broker.setQueryParameters(model, "descricao", "estadoAviario", "usuarioModel.id");
 		
-		return broker.executeUpdate();
+		return broker.executeReturnGeneratedKey();
 	}
 	
 	public AviarioModel Obter(AviarioModel model) {
@@ -31,10 +31,26 @@ public class AviarioDAO {
 		return (ArrayList<AviarioModel>)broker.getListObject(AviarioModel.class, "id", "descricao", "estadoAviario", "usuarioModel.id");
 	}
 	
-	public ArrayList<AviarioModel> ObterTodosPorUsuario(AviarioModel model) {
+	public ArrayList<AviarioModel> ObterPorDescricao(AviarioModel model) {
+		broker.setQuery("aviario.readAllByDescricao");
+		
+		broker.setQueryParameters(model, "descricao");
+		
+		return (ArrayList<AviarioModel>)broker.getListObject(AviarioModel.class, "id", "descricao", "estadoAviario", "usuarioModel.id");
+	}
+	
+	public ArrayList<AviarioModel> ObterPorUsuario(AviarioModel model) {
 		broker.setQuery("aviario.readAllByUser");
 		
 		broker.setQueryParameters(model, "usuarioModel.id");
+		
+		return (ArrayList<AviarioModel>)broker.getListObject(AviarioModel.class, "id", "descricao", "estadoAviario", "usuarioModel.id");
+	}
+	
+	public ArrayList<AviarioModel> ObterPorUsuarioDescricao(AviarioModel model) {
+		broker.setQuery("aviario.readAllByUserDescricao");
+		
+		broker.setQueryParameters(model, "usuarioModel.id", "descricao");
 		
 		return (ArrayList<AviarioModel>)broker.getListObject(AviarioModel.class, "id", "descricao", "estadoAviario", "usuarioModel.id");
 	}

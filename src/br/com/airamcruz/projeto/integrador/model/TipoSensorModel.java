@@ -63,4 +63,9 @@ public class TipoSensorModel {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return descricao;
+	}	
 }

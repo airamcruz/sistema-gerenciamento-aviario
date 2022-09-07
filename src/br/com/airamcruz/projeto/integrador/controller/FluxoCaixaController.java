@@ -6,14 +6,15 @@ import java.util.ArrayList;
 
 import br.com.airamcruz.projeto.integrador.model.FluxoCaixaModel;
 import br.com.airamcruz.projeto.integrador.model.UsuarioModel;
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.ManagerDAO;
 import br.com.airamcruz.projeto.integrador.util.enums.TipoFluxoCaixaEnum;
 
 public class FluxoCaixaController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
-
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd");
 
 	public boolean Inserir(String data, String tipoFluxoCaixa, String valor, int usuarioId) {
 		FluxoCaixaModel model = new FluxoCaixaModel();
@@ -34,24 +35,44 @@ public class FluxoCaixaController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public FluxoCaixaModel Obter(int id) {
 		FluxoCaixaModel model = this.managerDAO.getFluxoCaixaDAO().Obter(new FluxoCaixaModel(id));
 
-		//UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), this.formato.format(model.getData()),
-				String.valueOf(model.getValor()), String.valueOf(model.getTipoFluxoCaixa())};
+		carregarRelacionamento(model);
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<FluxoCaixaModel> ObterTodos() {
+		ArrayList<FluxoCaixaModel> result = new ArrayList<FluxoCaixaModel>();
 
 		for (FluxoCaixaModel model : this.managerDAO.getFluxoCaixaDAO().ObterTodos()) {
+			
+			carregarRelacionamento(model);
+			
+			//result.add(new String[] { String.valueOf(model.getId()), formato.format(model.getData()),
+				//	String.format("R$ %.02f", model.getValor()), String.valueOf(model.getTipoFluxoCaixa()) });
+			result.add(model);
+		}
 
-			//UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+		return result;
+	}
 
-			result.add(new String[] { String.valueOf(model.getId()), this.formato.format(model.getData()),
-					String.format("R$ %f", model.getValor()), String.valueOf(model.getTipoFluxoCaixa()) });
+	public ArrayList<FluxoCaixaModel> ObterPorUsuario() {
+		ArrayList<FluxoCaixaModel> result = new ArrayList<FluxoCaixaModel>();
+		
+		FluxoCaixaModel temp = new FluxoCaixaModel();
+		temp.setUsuarioModel(AuthManager.getInstance().getUsuario());
+
+		for (FluxoCaixaModel model : this.managerDAO.getFluxoCaixaDAO().ObterPorUsuario(temp)) {
+			
+			carregarRelacionamento(model);
+			
+			//result.add(new String[] { String.valueOf(model.getId()), formato.format(model.getData()),
+				//	String.format("R$ %.02f", model.getValor()), String.valueOf(model.getTipoFluxoCaixa()) });
+			result.add(model);
 		}
 
 		return result;
@@ -80,6 +101,10 @@ public class FluxoCaixaController {
 		int result = this.managerDAO.getFluxoCaixaDAO().Excluir(new FluxoCaixaModel(id));
 
 		return result > 0;
+	}
+	
+	private void carregarRelacionamento(FluxoCaixaModel model) {
+		model.setUsuarioModel(this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel()));
 	}
 
 }

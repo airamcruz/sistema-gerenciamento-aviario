@@ -12,7 +12,7 @@ public class HistoricoMonitoramentoController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	private SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	private SimpleDateFormat formato = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	public boolean Inserir(String valor, String horarioMonitoramento, int sensorId) {
 		try {
@@ -35,28 +35,33 @@ public class HistoricoMonitoramentoController {
 		return false;
 	}
 
-	public String[] Obter(int id) {
+	public HistoricoMonitoramentoModel Obter(int id) {
 		HistoricoMonitoramentoModel model = this.managerDAO.getHistoricoMonitoramentoDAO()
 				.Obter(new HistoricoMonitoramentoModel(id));
 
-		SensorModel sensorTemp = this.managerDAO.getSensorDAO().Obter(model.getSensorModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), model.getValor(),
-				this.formato.format(model.getHorarioMonitoramento()), sensorTemp.getDescricao() };
+		carregarRelacionamento(model);
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<HistoricoMonitoramentoModel> ObterTodos() {
+		ArrayList<HistoricoMonitoramentoModel> result = new ArrayList<HistoricoMonitoramentoModel>();
 
 		for (HistoricoMonitoramentoModel model : this.managerDAO.getHistoricoMonitoramentoDAO().ObterTodos()) {
 
-			SensorModel sensorTemp = this.managerDAO.getSensorDAO().Obter(model.getSensorModel());
+			carregarRelacionamento(model);
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getValor(),
-					this.formato.format(model.getHorarioMonitoramento()), sensorTemp.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
+	}
+
+	private void carregarRelacionamento(HistoricoMonitoramentoModel model) {
+		model.setSensorModel(this.managerDAO.getSensorDAO().Obter(model.getSensorModel()));
 	}
 
 }

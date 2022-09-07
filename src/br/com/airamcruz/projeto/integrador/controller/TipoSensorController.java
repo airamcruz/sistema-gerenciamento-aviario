@@ -18,30 +18,30 @@ public class TipoSensorController {
 		return result > 0;
 	}
 
-	public String[] Obter(int id) {
+	public TipoSensorModel Obter(int id) {
 		TipoSensorModel model = this.managerDAO.getTipoSensorDAO().Obter(new TipoSensorModel(id));
-		
-		if(model == null)
+
+		if (model == null)
 			return null;
 		
-		return new String[] { String.valueOf(model.getId()), model.getDescricao() };
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<TipoSensorModel> ObterTodos() {
+		ArrayList<TipoSensorModel> result = new ArrayList<TipoSensorModel>();
 
 		for (TipoSensorModel model : this.managerDAO.getTipoSensorDAO().ObterTodos()) {
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao() });
+			result.add(model);
 		}
 
 		return result;
 	}
 
-	public ArrayList<String[]> ObterPorDescricao(String descricao) {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<TipoSensorModel> ObterPorDescricao(String descricao) {
+		ArrayList<TipoSensorModel> result = new ArrayList<TipoSensorModel>();
 
 		for (TipoSensorModel model : this.managerDAO.getTipoSensorDAO().ObterPorDescricao(new TipoSensorModel(descricao))) {
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao() });
+			result.add(model);
 		}
 
 		return result;

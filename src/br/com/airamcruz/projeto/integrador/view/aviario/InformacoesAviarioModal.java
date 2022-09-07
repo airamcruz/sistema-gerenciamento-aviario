@@ -1,4 +1,4 @@
-package br.com.airamcruz.projeto.integrador.view.tiposensor;
+package br.com.airamcruz.projeto.integrador.view.aviario;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -27,13 +27,21 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
+import br.com.airamcruz.projeto.integrador.controller.AviarioController;
+import br.com.airamcruz.projeto.integrador.controller.LoteController;
 import br.com.airamcruz.projeto.integrador.controller.SensorController;
 import br.com.airamcruz.projeto.integrador.controller.TipoSensorController;
+import br.com.airamcruz.projeto.integrador.model.AviarioModel;
+import br.com.airamcruz.projeto.integrador.model.LoteModel;
 import br.com.airamcruz.projeto.integrador.model.SensorModel;
 import br.com.airamcruz.projeto.integrador.model.TipoSensorModel;
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.components.TabelaModel;
+import br.com.airamcruz.projeto.integrador.util.enums.EstadoAviarioEnum;
 
-public class InformacoesTipoSensorModal extends JDialog {
+import javax.swing.JComboBox;
+
+public class InformacoesAviarioModal extends JDialog {
 
 	private static final long serialVersionUID = 8505461754269649451L;
 
@@ -42,19 +50,20 @@ public class InformacoesTipoSensorModal extends JDialog {
 	private boolean sucessoAlteracao = false;
 
 	private JTable table;
+	private JComboBox<EstadoAviarioEnum> cbxEstadoAviario;
 	private TabelaModel modeloTabela;
-	
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-	private TipoSensorController Controller = new TipoSensorController();
 
-	private TipoSensorModel tipoSensorData = null;
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	private AviarioController Controller = new AviarioController();
+
+	private AviarioModel aviarioData = null;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			InformacoesTipoSensorModal dialog = new InformacoesTipoSensorModal(0);
+			InformacoesAviarioModal dialog = new InformacoesAviarioModal(0);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -73,18 +82,19 @@ public class InformacoesTipoSensorModal extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public InformacoesTipoSensorModal(int id) {
+	public InformacoesAviarioModal(int id) {
 
-		this.tipoSensorData = Controller.Obter(id);
+		this.aviarioData = Controller.Obter(id);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
-				PreencherTabela();
+				if (id > 0)
+					PreencherTabela();
 			}
 		});
 		setResizable(false);
-		setTitle("Adicionar Tipo de Sensor");
+		setTitle("Informa\u00E7\u00F5es do Aviario");
 		setModal(true);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -103,17 +113,18 @@ public class InformacoesTipoSensorModal extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
-			JLabel lblNewLabel = new JLabel("Descricao do Tipo de Sensor:");
-			lblNewLabel.setFont(new Font("Verdana", Font.PLAIN, 12));
-			lblNewLabel.setBounds(10, 11, 159, 14);
-			contentPanel.add(lblNewLabel);
+			JLabel lblAviario = new JLabel("Descricao do Aviario:");
+			lblAviario.setFont(new Font("Verdana", Font.PLAIN, 12));
+			lblAviario.setBounds(10, 11, 198, 14);
+			contentPanel.add(lblAviario);
 		}
 		{
 			txtDescricao = new JTextField();
-			txtDescricao.setBounds(10, 36, 304, 20);
+			txtDescricao.setBounds(10, 36, 254, 20);
 			contentPanel.add(txtDescricao);
 			txtDescricao.setColumns(10);
-			txtDescricao.setText(tipoSensorData.getDescricao());
+			if (id > 0)
+				txtDescricao.setText(aviarioData.getDescricao());
 		}
 
 		JPanel panel = new JPanel();
@@ -121,10 +132,10 @@ public class InformacoesTipoSensorModal extends JDialog {
 		contentPanel.add(panel);
 		panel.setLayout(null);
 
-		JLabel lblNewLabel_1 = new JLabel("Sensores associados:");
-		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblNewLabel_1.setBounds(10, 11, 334, 14);
-		panel.add(lblNewLabel_1);
+		JLabel lblHistoricoLote = new JLabel("Historico de Lotes:");
+		lblHistoricoLote.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblHistoricoLote.setBounds(10, 11, 243, 14);
+		panel.add(lblHistoricoLote);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 35, 525, 247);
@@ -132,6 +143,18 @@ public class InformacoesTipoSensorModal extends JDialog {
 
 		table = new JTable();
 		scrollPane.setViewportView(table);
+
+		JLabel lblEstadoAviario = new JLabel("Estado do Aviario:");
+		lblEstadoAviario.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblEstadoAviario.setBounds(300, 14, 245, 14);
+		contentPanel.add(lblEstadoAviario);
+
+		cbxEstadoAviario = new JComboBox<EstadoAviarioEnum>(EstadoAviarioEnum.values());
+		cbxEstadoAviario.setBounds(300, 34, 245, 22);
+		if (id > 0)
+			cbxEstadoAviario.setSelectedItem(aviarioData.getEstadoAviario());
+
+		contentPanel.add(cbxEstadoAviario);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -151,7 +174,9 @@ public class InformacoesTipoSensorModal extends JDialog {
 				JButton btnSalvar = new JButton("Salvar");
 				btnSalvar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (Controller.Atualizar(tipoSensorData.getId(), txtDescricao.getText())) {
+						if (Controller.Atualizar(aviarioData.getId(), txtDescricao.getText(),
+								cbxEstadoAviario.getSelectedItem().toString(),
+								AuthManager.getInstance().getUsuario().getId())) {
 							JOptionPane.showMessageDialog(null, "Registro Salvo com Sucesso!");
 							sucessoAlteracao = true;
 							close();
@@ -168,23 +193,25 @@ public class InformacoesTipoSensorModal extends JDialog {
 		}
 	}
 
-	private void RecarregarDadosTabela(List<SensorModel> linhas) {
+	private void RecarregarDadosTabela(List<LoteModel> linhas) {
 		modeloTabela.clear();
-		for (SensorModel row : linhas) {
-			modeloTabela.addRow(new Object[] { row.getId(), row.getDescricao(), formatter.format(row.getDataInstalacao()) });
+		for (LoteModel row : linhas) {
+			String previsaoAbate = row.getPrevisaoAbate() != null ? formatter.format(row.getPrevisaoAbate()) : "";
+			modeloTabela.addRow(new Object[] { row.getId(), row.getDescricao(), formatter.format(row.getDataCompra()),
+					row.getQuantidadeFrangos(), previsaoAbate, row.getAviarioModel().getDescricao() });
 		}
 	}
 
 	private void PreencherTabela() {
-		String[] Colunas = new String[] { "ID", "DESCRIÇÂO", "DATA INSTALAÇAO" };
+		String[] Colunas = new String[] { "ID", "DESCRIÇÂO", "DATA COMPRA", "QUANTIDADE DE FRANGOS", "PREVISÃO DO ABATE" };
 		modeloTabela = new TabelaModel(Colunas, new ArrayList<Object[]>());
 		table.setModel(modeloTabela);
 
-		SensorController sensorController = new SensorController();
+		LoteController loteController = new LoteController();
 
-		RecarregarDadosTabela(sensorController.ObterPorTipoSensor(tipoSensorData.getId()));
+		RecarregarDadosTabela(loteController.ObterPorAviario(aviarioData.getId()));
 
-		//ajustarColunasTabela();
+		// ajustarColunasTabela();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
 

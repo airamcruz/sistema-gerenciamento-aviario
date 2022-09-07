@@ -1,4 +1,4 @@
-package br.com.airamcruz.projeto.integrador.view.fluxocaixa;
+package br.com.airamcruz.projeto.integrador.view.lote;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,6 +21,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -35,32 +35,34 @@ import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
 import com.github.lgooddatepicker.optionalusertools.TimeVetoPolicy;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
-import br.com.airamcruz.projeto.integrador.controller.FluxoCaixaController;
-import br.com.airamcruz.projeto.integrador.model.FluxoCaixaModel;
-import br.com.airamcruz.projeto.integrador.util.AuthManager;
-import br.com.airamcruz.projeto.integrador.util.enums.TipoFluxoCaixaEnum;
+import br.com.airamcruz.projeto.integrador.controller.AviarioController;
+import br.com.airamcruz.projeto.integrador.controller.LoteController;
+import br.com.airamcruz.projeto.integrador.model.AviarioModel;
+import br.com.airamcruz.projeto.integrador.model.LoteModel;
 
-public class CadastroInformacaoFluxoCaixaModal extends JDialog {
+public class CadastroInformacaoLoteModal extends JDialog {
 
 	private static final long serialVersionUID = 7171037448266548682L;
-	
-	private static CadastroInformacaoFluxoCaixaModal dialog;
+
+	private static CadastroInformacaoLoteModal dialog;
 	private final JPanel contentPanel = new JPanel();
 	private boolean sucessoAlteracao = false;
 	private DatePicker datePicker;
+	private JComboBox cbxAviario;
 
-	FluxoCaixaController Controller = new FluxoCaixaController();
+	LoteController Controller = new LoteController();
 
-	private FluxoCaixaModel fluxoCaixaModel = null;
+	private LoteModel loteModel = null;
 
-	private JFormattedTextField txtValor;
+	private JFormattedTextField txtQuantidadeDeFrangos;
+	private JTextField txtDescricao;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			dialog = new CadastroInformacaoFluxoCaixaModal(0);
+			dialog = new CadastroInformacaoLoteModal(0);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -81,12 +83,12 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 	 * 
 	 * @throws ParseException
 	 */
-	public CadastroInformacaoFluxoCaixaModal(int id) throws ParseException {
+	public CadastroInformacaoLoteModal(int id) throws ParseException {
 
 		if (id == 0) {
-			this.fluxoCaixaModel = null;
+			this.loteModel = null;
 		} else {
-			this.fluxoCaixaModel = Controller.Obter(id);
+			this.loteModel = Controller.Obter(id);
 		}
 
 		addWindowListener(new WindowAdapter() {
@@ -95,7 +97,7 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 			}
 		});
 		setResizable(false);
-		setTitle("Informa\u00E7\u00F5es Fluxo de Caixa");
+		setTitle("Informa\u00E7\u00F5es de Lote");
 		setModal(true);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -117,7 +119,7 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		DatePickerSettings dateSettings = new DatePickerSettings();
 		datePicker = new DatePicker(dateSettings);
 		if (id > 0) {
-			datePicker.setDate(fluxoCaixaModel.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			datePicker.setDate(loteModel.getDataCompra().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		}
 		datePicker.addDateChangeListener(new DateChangeListener() {
 			public void dateChanged(DateChangeEvent arg0) {
@@ -128,46 +130,63 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		// dateSettings.setDateRangeLimits(LocalDate.now().minusDays(20),
 		// LocalDate.now().plusDays(20));
 		// datePicker.getComponentDateTextField().setEnabled(false);
-		//datePicker.getComponentDateTextField().setEditable(false);
-		datePicker.setBounds(10, 31, 204, 20);
+		// datePicker.getComponentDateTextField().setEditable(false);
+		datePicker.setBounds(233, 33, 204, 20);
 		contentPanel.add(datePicker);
 
-		JLabel lblData = new JLabel("Data:");
-		lblData.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblData.setBounds(12, 12, 159, 14);
-		contentPanel.add(lblData);
+		JLabel lblDataCompra = new JLabel("Data Compra:");
+		lblDataCompra.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblDataCompra.setBounds(235, 14, 159, 14);
+		contentPanel.add(lblDataCompra);
 
-		JLabel lblTipoFluixo = new JLabel("Perfil:");
-		lblTipoFluixo.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblTipoFluixo.setBounds(245, 12, 104, 14);
-		contentPanel.add(lblTipoFluixo);
+		JLabel lblQuantidadeDeFrangos = new JLabel("Quantidade de frangos:");
+		lblQuantidadeDeFrangos.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblQuantidadeDeFrangos.setBounds(12, 75, 202, 14);
+		contentPanel.add(lblQuantidadeDeFrangos);
 
-		JComboBox<TipoFluxoCaixaEnum> cbxTipoFluxo = new JComboBox<TipoFluxoCaixaEnum>(TipoFluxoCaixaEnum.values());
-		cbxTipoFluxo.setBounds(245, 32, 192, 22);
-		contentPanel.add(cbxTipoFluxo);
-
-		JLabel lblValor = new JLabel("Valor:");
-		lblValor.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblValor.setBounds(10, 65, 300, 14);
-		contentPanel.add(lblValor);
-
-		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-		format.setMaximumFractionDigits(2);
-
+		NumberFormat format = NumberFormat.getInstance();
 		NumberFormatter formatter = new NumberFormatter(format);
+		formatter.setValueClass(Integer.class);
+		formatter.setMinimum(0);
+		formatter.setMaximum(Integer.MAX_VALUE);
 		formatter.setAllowsInvalid(false);
-		formatter.setOverwriteMode(true);
+		// If you want the value to be committed on each keystroke instead of focus lost
+		formatter.setCommitsOnValidEdit(true);
 
-		txtValor = new JFormattedTextField(formatter);
+		txtQuantidadeDeFrangos = new JFormattedTextField(formatter);
 
 		if (id > 0)
-			txtValor.setValue(fluxoCaixaModel.getValor());
+			txtQuantidadeDeFrangos.setValue(loteModel.getQuantidadeFrangos());
 		else
-			txtValor.setValue(0.0);
+			txtQuantidadeDeFrangos.setValue(0);
 
-		txtValor.setColumns(10);
-		txtValor.setBounds(10, 86, 204, 20);
-		contentPanel.add(txtValor);
+		txtQuantidadeDeFrangos.setColumns(10);
+		txtQuantidadeDeFrangos.setBounds(12, 96, 202, 20);
+		contentPanel.add(txtQuantidadeDeFrangos);
+
+		JLabel lblDescricao = new JLabel("Descri\u00E7\u00E3o:");
+		lblDescricao.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblDescricao.setBounds(12, 12, 202, 14);
+		contentPanel.add(lblDescricao);
+
+		txtDescricao = new JTextField();
+		txtDescricao.setBounds(12, 33, 202, 20);
+		if (id > 0)
+			txtDescricao.setText(loteModel.getDescricao());
+		contentPanel.add(txtDescricao);
+		txtDescricao.setColumns(10);
+
+		cbxAviario = new JComboBox();
+		cbxAviario.setBounds(233, 95, 204, 22);
+		carregarComboBox();
+		if (id > 0)
+			cbxAviario.setSelectedItem(loteModel.getAviarioModel());
+		contentPanel.add(cbxAviario);
+
+		JLabel lblAviario = new JLabel("Aviario:");
+		lblAviario.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblAviario.setBounds(235, 76, 202, 14);
+		contentPanel.add(lblAviario);
 
 		{
 			JPanel buttonPane = new JPanel();
@@ -188,8 +207,9 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 				JButton btnSalvar = new JButton("Salvar");
 				btnSalvar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-												
-						if (datePicker.getDate() == null || txtValor.getText().isEmpty()) {
+
+						if (datePicker.getDate() == null || txtQuantidadeDeFrangos.getText().isEmpty()
+								|| cbxAviario.getSelectedItem() == null || txtDescricao.getText().isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Campos não preenchidos!");
 							return;
 						}
@@ -205,11 +225,13 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 
 							if (id == 0) {
 
-								resultado = Controller.Inserir(dataS, cbxTipoFluxo.getSelectedItem().toString(),
-										txtValor.getValue().toString(), AuthManager.getInstance().getUsuario().getId());
+								resultado = Controller.Inserir(txtDescricao.getText(), dataS,
+										Integer.parseInt(txtQuantidadeDeFrangos.getValue().toString()),
+										((AviarioModel) cbxAviario.getSelectedItem()).getId());
 							} else {
-								resultado = Controller.Atualizar(id, dataS, cbxTipoFluxo.getSelectedItem().toString(),
-										txtValor.getValue().toString());
+								resultado = Controller.Atualizar(id, txtDescricao.getText(), dataS,
+										Integer.parseInt(txtQuantidadeDeFrangos.getValue().toString()),
+										((AviarioModel) cbxAviario.getSelectedItem()).getId());
 							}
 
 							if (resultado) {
@@ -244,6 +266,13 @@ public class CadastroInformacaoFluxoCaixaModal extends JDialog {
 		public boolean isTimeAllowed(LocalTime time) {
 			// Only allow times from 9a to 5p, inclusive.
 			return PickerUtilities.isLocalTimeInRange(time, LocalTime.of(9, 00), LocalTime.of(17, 00), true);
+		}
+	}
+
+	private void carregarComboBox() {
+		AviarioController aviarioController = new AviarioController();
+		for (AviarioModel model : aviarioController.ObterPorUsuario()) {
+			cbxAviario.addItem(model);
 		}
 	}
 }

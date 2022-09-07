@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import br.com.airamcruz.projeto.integrador.model.AviarioModel;
 import br.com.airamcruz.projeto.integrador.model.UsuarioModel;
+import br.com.airamcruz.projeto.integrador.util.AuthManager;
 import br.com.airamcruz.projeto.integrador.util.ManagerDAO;
 import br.com.airamcruz.projeto.integrador.util.enums.EstadoAviarioEnum;
 
@@ -11,7 +12,7 @@ public class AviarioController {
 
 	private ManagerDAO managerDAO = ManagerDAO.getInstance();
 
-	public boolean Inserir(String descricao, String estadoAviario, int usuarioId) {
+	public int Inserir(String descricao, String estadoAviario, int usuarioId) {
 		AviarioModel model = new AviarioModel();
 		model.setDescricao(descricao);
 		model.setEstadoAviario(EstadoAviarioEnum.valueOf(estadoAviario));
@@ -19,27 +20,87 @@ public class AviarioController {
 
 		int result = this.managerDAO.getAviarioDAO().Inserir(model);
 
-		return result > 0;
+		return result;
 	}
 
-	public String[] Obter(int id) {
+	public AviarioModel Obter(int id) {
 		AviarioModel model = this.managerDAO.getAviarioDAO().Obter(new AviarioModel(id));
 
-		UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+		if (model == null)
+			return null;
 
-		return new String[] { String.valueOf(model.getId()), model.getDescricao(),
-				String.valueOf(model.getEstadoAviario()), String.valueOf(usuarioTemp.getNome()) };
+		carregarRelacionamento(model);
+
+		return model;
 	}
 
-	public ArrayList<String[]> ObterTodos() {
-		ArrayList<String[]> result = new ArrayList<String[]>();
+	public ArrayList<AviarioModel> ObterTodos() {
+		ArrayList<AviarioModel> result = new ArrayList<AviarioModel>();
 
 		for (AviarioModel model : this.managerDAO.getAviarioDAO().ObterTodos()) {
 
-			UsuarioModel usuarioTemp = this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel());
+			carregarRelacionamento(model);
+			
+			result.add(model);
+		}
 
-			result.add(new String[] { String.valueOf(model.getId()), model.getDescricao(),
-					String.valueOf(model.getEstadoAviario()), String.valueOf(usuarioTemp.getNome()) });
+		return result;
+	}
+
+	public ArrayList<AviarioModel> ObterPorDescricao(String descricao) {
+		ArrayList<AviarioModel> result = new ArrayList<AviarioModel>();
+		
+		AviarioModel temp = new AviarioModel();
+		temp.setDescricao(descricao);
+
+		for (AviarioModel model : this.managerDAO.getAviarioDAO().ObterPorDescricao(temp)) {
+			
+			carregarRelacionamento(model);
+			
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<AviarioModel> ObterPorUsuarioDescricao(String descricao) {
+		ArrayList<AviarioModel> result = new ArrayList<AviarioModel>();
+		
+		AviarioModel temp = new AviarioModel();
+		temp.setDescricao(descricao);
+		temp.setUsuarioModel(AuthManager.getInstance().getUsuario());
+
+		for (AviarioModel model : this.managerDAO.getAviarioDAO().ObterPorUsuarioDescricao(temp)) {
+			
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<AviarioModel> ObterPorUsuario() {
+		ArrayList<AviarioModel> result = new ArrayList<AviarioModel>();
+		
+		AviarioModel temp = new AviarioModel();
+		temp.setUsuarioModel(AuthManager.getInstance().getUsuario());
+
+		for (AviarioModel model : this.managerDAO.getAviarioDAO().ObterPorUsuario(temp)) {
+			
+			result.add(model);
+		}
+
+		return result;
+	}
+
+	public ArrayList<AviarioModel> ObterPorUsuario(int usuarioId) {
+		ArrayList<AviarioModel> result = new ArrayList<AviarioModel>();
+		
+		AviarioModel temp = new AviarioModel();
+		temp.setUsuarioModel(new UsuarioModel(usuarioId));
+
+		for (AviarioModel model : this.managerDAO.getAviarioDAO().ObterPorUsuario(temp)) {
+			
+			result.add(model);
 		}
 
 		return result;
@@ -61,6 +122,10 @@ public class AviarioController {
 		int result = this.managerDAO.getAviarioDAO().Excluir(new AviarioModel(id));
 
 		return result > 0;
+	}
+	
+	private void carregarRelacionamento(AviarioModel model) {
+		model.setUsuarioModel(this.managerDAO.getUsuarioDAO().Obter(model.getUsuarioModel()));
 	}
 
 }

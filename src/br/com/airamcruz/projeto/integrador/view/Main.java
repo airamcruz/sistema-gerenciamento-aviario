@@ -86,7 +86,7 @@ public class Main extends JFrame {
 		label.setBounds(10, 45, 151, 163);
 		contentPane.add(label);
 
-		JLabel lblLogin = new JLabel("Informe seu login:");
+		JLabel lblLogin = new JLabel("Informe seu CPF:");
 		lblLogin.setBounds(171, 61, 194, 14);
 		contentPane.add(lblLogin);
 		lblLogin.setFont(new Font("Verdana", Font.PLAIN, 11));
@@ -101,7 +101,7 @@ public class Main extends JFrame {
 		txtLogin.setToolTipText("Digite seu CPF");
 		txtLogin.setColumns(10);
 
-		JLabel lblSenha = new JLabel("Digite sua Matricula:");
+		JLabel lblSenha = new JLabel("Informe sua senha:");
 		lblSenha.setFont(new Font("Verdana", Font.PLAIN, 11));
 		lblSenha.setBounds(171, 110, 194, 14);
 		contentPane.add(lblSenha);

@@ -89,6 +89,11 @@ public class SensorModel {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "SensorModel [descricao=" + descricao + "]";
+	}
 	
 	
 }
